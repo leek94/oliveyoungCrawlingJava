@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static util.common.nullCheck;
+
 public class EventCrawling {
     public static void main(String[] args) {
         String siteType = "OL";
@@ -26,16 +28,10 @@ public class EventCrawling {
 
             for(Element tagItem : tag){
                 Element titleElement = tagItem.selectFirst(" p.evt_tit ");
-                String title = null;
-                if(titleElement != null){
-                    title = titleElement.text();
-                }
+                String title = nullCheck(titleElement);
 
                 Element contentElement = tagItem.selectFirst(" p.evt_desc");
-                String content = null;
-                if(contentElement != null){
-                    content = contentElement.text();
-                }
+                String content = nullCheck(contentElement);
 
                 Element imgElement = tagItem.selectFirst("img");
                 String img = null;
@@ -72,11 +68,7 @@ public class EventCrawling {
                 //span.evt_flag로 해야 온라인, 온&오프라인, 오프라인 다 나옴 span.evt_flag.online으로 하면 온라인만 나옴
 //                Element flagElement = tagItem.selectFirst("span.evt_flag");
                 Element flagElement = tagItem.selectFirst("span.evt_flag.online");
-                String flag = null;
-                if (flagElement != null) {
-                    flag = flagElement.text();
-                    System.out.println(flag);
-                }
+                String flag = nullCheck(flagElement);
 
                 Map<String, String> eventIns = new HashMap<>();
                 eventIns.put("title", title);
