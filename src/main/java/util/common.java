@@ -1,5 +1,9 @@
 package util;
 
+import org.jsoup.nodes.Element;
+
+import java.util.Optional;
+
 public class common {
 
     public static double calculateDiscountPercent(String bePrice, String price) {
@@ -13,4 +17,19 @@ public class common {
         return ((bePriceInt - priceInt) / (double) bePriceInt * 100);
     }
 
+    public static String nullcheck(String string) {
+        if(string == null || string.isEmpty()){
+            return "null";
+        }
+
+        return string;
+    }
+
+//    public static Optional<String> optional(Element element) {
+//
+//
+//        return Optional.ofNullable(element)
+//                .map(Element::text)
+//                .orElse(null);
+//    }
 }
