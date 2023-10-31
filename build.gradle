@@ -26,6 +26,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter:2.5.5' // 스프링 부트 버전 업데이트
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 	implementation 'org.jsoup:jsoup:1.15.3'
 }
 
