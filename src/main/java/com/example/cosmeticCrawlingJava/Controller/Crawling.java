@@ -83,89 +83,96 @@ public class Crawling {
 
                     for (int k = 0; k < Integer.parseInt(productCount); k++) {
 
-                        if (row == 24) {
-                            System.out.println(row);
-                            String nextLink = depth3Url + "&pageIdx=" + page;
-                            Document document3 = Jsoup.connect(nextLink).get();
-                            tag = document3.select("#Contents > ul > li[data-index]:not([data-index*='\\D'])");
-                            page++;
-                            row = 0;
-                        }
+                            if (row == 24) {
+                                System.out.println(row);
+                                String nextLink = depth3Url + "&pageIdx=" + page;
+                                Document document3 = Jsoup.connect(nextLink).get();
+                                tag = document3.select("#Contents > ul > li[data-index]:not([data-index*='\\D'])");
+                                page++;
+                                row = 0;
+                            }
 
-                        Element tagItem = tag.get(row);
+                            Element tagItem = tag.get(row);
 
-                        Element imgElement = tagItem.selectFirst("div > a > img"); // 앞의 이미지의 html을 저장
-                        String img = common.nullcheck(imgElement.attr("src")); //이미지의 절대 주소 저장
+                            Element imgElement = tagItem.selectFirst("div > a > img"); // 앞의 이미지의 html을 저장
+                            String img = Optional.ofNullable(imgElement)
+                                    .map(element -> element.attr("src"))
+                                    .orElse(""); //이미지의 절대 주소 저장
 
-                        Element infoElement = tagItem.selectFirst("a.prd_thumb"); //a태크 prd_thumb 클래스가 처음 나오는 것이 저장됨
-                        String info = common.nullcheck(infoElement.attr("href"));
-                        String prodCode = common.nullcheck(infoElement.attr("data-ref-goodsno"));
+                            Element infoElement = tagItem.selectFirst("a.prd_thumb"); //a태크 prd_thumb 클래스가 처음 나오는 것이 저장됨
+                            String info = Optional.ofNullable(infoElement)
+                                    .map(element -> element.attr("href"))
+                                    .orElse("");
 
-                        Element brandElement = tagItem.selectFirst("span.tx_brand");
-                        String brand = common.nullcheck(brandElement.text());
+                            String prodCode = Optional.ofNullable(infoElement)
+                                    .map(element -> element.attr("data-ref-goodsno"))
+                                    .orElse("");
 
-                        Element prodNameElement = tagItem.selectFirst("p.tx_name");
-                        String prodName = common.nullcheck(prodNameElement.text());
+                            Element brandElement = tagItem.selectFirst("span.tx_brand");
+                            String brand = common.nullCheck(brandElement);
 
-                        Element bePriceElement = tagItem.selectFirst("span.tx_org > span");
-                        // Optional로 null 값을 스트링 값인 "0"으로 변경
-                        String bePrice = common.nullcheck(bePriceElement.text().replaceAll("[^0-9]]", ""));
+                            Element prodNameElement = tagItem.selectFirst("p.tx_name");
+                            String prodName = common.nullCheck(prodNameElement);
+
+                            Element bePriceElement = tagItem.selectFirst("span.tx_org > span");
+                            // Optional로 null 값을 스트링 값인 "0"으로 변경
+                            String bePrice = common.nullCheckPrice(bePriceElement);
+                            System.out.println("bePrice :" + bePrice);
 //                        String bePrice = Optional.ofNullable(bePriceElement)
 //                                .map(Element::text)
 //                                .map(text -> text.replaceAll("[^0-9]", ""))
 //                                .orElse("0");// 정규 표현식으로 숫자가 아닌 문자는 전부 삭제
 
-                        Element priceElement = tagItem.selectFirst("span.tx_cur > span");
-                        String price = common.nullcheck(priceElement.text().replaceAll("[^0-9]", ""));
+                            Element priceElement = tagItem.selectFirst("span.tx_cur > span");
+                            String price = common.nullCheckPrice(priceElement);
+                            System.out.println("price :" + price);
 
-                        Element soldOutElement = tagItem.selectFirst("span.soldout");
-                        String soldOut = common.nullcheck(soldOutElement.text());
-                        System.out.println(soldOut);
+                            Element soldOutElement = tagItem.selectFirst("span.soldout");
+                            String soldOut = common.nullCheck(soldOutElement);
+                            System.out.println(soldOut);
 //                        String soldOut = Optional.ofNullable(soldOutElement)
 //                                .map(Element::text)
 //                                .orElse(null);
 
 
-                        Element saleElement = tagItem.selectFirst("span.icon_flag.sale"); //span의 클래스 icon_flag와 클래스 sale 두개를 동시에 갖는 값을 뽑음
-                        String sale = common.nullcheck(saleElement.text());
+                            Element saleElement = tagItem.selectFirst("span.icon_flag.sale"); //span의 클래스 icon_flag와 클래스 sale 두개를 동시에 갖는 값을 뽑음
+                            String sale = common.nullCheck(saleElement);
 //                        String sale = Optional.ofNullable(saleElement)
 //                                .map(Element::text)
 //                                .orElse(null); // 세일 안할 경우 null 값이 반환되서 Optional로 잡아줌
 
-                        System.out.println(row);
-//                        Product product = new Product(img, "")
+                            Map<String, Object> ins = new HashMap<>();
+                            ins.put("imgPath", img);
+                            ins.put("img", "/uploadc/cpmtents/image/" + siteType + "/" + prodCode + ".png");
+                            ins.put("img2", "");
+                            ins.put("info", info);
+                            ins.put("infoCoupang", "https://link.coupang.com/a/3IhPI");
+                            ins.put("prodName", prodName);
+                            ins.put("prodCode", prodCode);
+                            ins.put("price", price); //String 값 들어가 있음
+                            ins.put("bePrice", bePrice);
+                            ins.put("sale", common.calculateDiscountPercent(bePrice, price)); // int로 변경
+                            ins.put("soldOut", soldOut);
+                            System.out.println(soldOut);
+                            //TODO : for문이 돌아가서 저장된 리스트에서 첫번째 값부터 불러와지면서 값이 들어가짐
+                            ins.put("siteDepth1", siteDepth1);
+                            ins.put("siteDepth2", siteDepth2);
+                            //TODO : for 문이 끝까지 돌아서 siteDepth1 : 남성, siteDepth2 : 바디케어 값이 들어가 있음
+                            //TODO : 그래서 위에 처럼 저장된 List에서 객체 순서대로 불러와야 올바른 값이 들어감!!!
+                            ins.put("siteDepth3", siteDepth3Text); // text가 나와야함
+                            ins.put("siteType", siteType);
+                            ins.put("brand", brand);
 
-                        Map<String, Object> ins = new HashMap<>();
-                        ins.put("imgPath", img);
-                        ins.put("img", "/uploadc/cpmtents/image/" + siteType + "/" + prodCode + ".png");
-                        ins.put("img2", "");
-                        ins.put("info", info);
-                        ins.put("infoCoupang", "https://link.coupang.com/a/3IhPI");
-                        ins.put("prodName", prodName);
-                        ins.put("prodCode", prodCode);
-                        ins.put("price", price); //String 값 들어가 있음
-                        ins.put("bePrice", bePrice);
-                        ins.put("sale", common.calculateDiscountPercent(bePrice,price)); // int로 변경
-                        ins.put("soldOut", soldOut);
-                        //TODO : for문이 돌아가서 저장된 리스트에서 첫번째 값부터 불러와지면서 값이 들어가짐
-                        ins.put("siteDepth1", siteDepth1);
-                        ins.put("siteDepth2", siteDepth2);
-                        //TODO : for 문이 끝까지 돌아서 siteDepth1 : 남성, siteDepth2 : 바디케어 값이 들어가 있음
-                        //TODO : 그래서 위에 처럼 저장된 List에서 객체 순서대로 불러와야 올바른 값이 들어감!!!
-                        ins.put("siteDepth3", siteDepth3Text); // text가 나와야함
-                        ins.put("siteType", siteType);
-                        ins.put("brand", brand);
+                            row++;
 
-                        row++;
-
-                        //Create a Product object and add it to the product list
-                        Product product = new Product(img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png" , info,
-                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice,price),
-                                soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
-                        productList.add(product);
-                        // TODO : 공통에 product 문 작성 필요
+                            //Create a Product object and add it to the product list
+                            Product product = new Product(img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", info,
+                                    prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
+                                    soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
+                            productList.add(product);
+                            // TODO : 공통에 product 문 작성 필요
 //                        product(productList, prodCount);
-                        productList.clear();
+                            productList.clear();
                     }
                 }
 

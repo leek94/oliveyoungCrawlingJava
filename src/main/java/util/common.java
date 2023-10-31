@@ -17,19 +17,18 @@ public class common {
         return ((bePriceInt - priceInt) / (double) bePriceInt * 100);
     }
 
-    public static String nullcheck(String string) {
-        if(string == null || string.isEmpty()){
-            return "null";
-        }
+    public static String nullCheck(Element element) {
 
-        return string;
+        return Optional.ofNullable(element)
+                .map(Element::text)
+                .orElse("");
     }
 
-//    public static Optional<String> optional(Element element) {
-//
-//
-//        return Optional.ofNullable(element)
-//                .map(Element::text)
-//                .orElse(null);
-//    }
+    public static String nullCheckPrice(Element element) {
+
+        return Optional.ofNullable(element)
+                .map(Element::text)
+                .map(text -> text.replaceAll("[^0-9]", ""))
+                .orElse("0");
+    }
 }
