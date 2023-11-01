@@ -7,17 +7,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static util.common.nullCheck;
 
 public class EventCrawling {
     public static void main(String[] args) {
         String siteType = "OL";
-        List<Map<String, String>> eventList = new ArrayList<>();
+        List<Event> eventList = new ArrayList<>();
         String eventLink = "https://www.oliveyoung.co.kr/store/main/getEventList.do?evtType=20";
         //이벤트 페이지 링크 주소 확인 필요!!
 
@@ -35,22 +32,22 @@ public class EventCrawling {
                 String content = nullCheck(contentElement);
 
                 Element imgElement = tagItem.selectFirst("img");
-                String img = null;
-                if (imgElement != null) {
-                    img = imgElement.attr("data-original");
-                }
+                String img = Optional.ofNullable(imgElement)
+                        .map(element -> element.attr("src"))
+                        .orElse("");
 
                 //child 타입은 자식 중에 두번째에 있는걸 찾는 것임 1.a , 2, hidden 이여서 hidden을 찾음
                 Element linkElement = tagItem.selectFirst("input[type=hidden]:nth-child(2)");
-                String link = null;
-                if (linkElement != null) {
-                    link = "https://www.oliveyoung.co.kr/store/event/getEventDetail.do?evtNo=" + linkElement.val();
-                }
+                String link = Optional.ofNullable(linkElement)
+                        .map(element -> "https://www.oliveyoung.co.kr/store/event/getEventDetail.do?evtNo=" + element.val())
+                        .orElse("");
 
-                String eventCode = null;
-                if (link != null) {
-                    eventCode = link.split("=")[1];
-                }
+
+                String eventCode = Optional.ofNullable(link)
+                        .map(l -> l.split("="))
+                        .filter(splitArray -> splitArray.length > 1)
+                        .map(splitArray -> splitArray[1])
+                        .orElse("");
 
                 Element eventDateElement = tagItem.selectFirst("p.evt_date");
                 String[] eventDate = null;
@@ -71,18 +68,19 @@ public class EventCrawling {
                 Element flagElement = tagItem.selectFirst("span.evt_flag.online");
                 String flag = nullCheck(flagElement);
 
-                Map<String, String> eventIns = new HashMap<>();
-                eventIns.put("title", title);
-                eventIns.put("content", content);
-                eventIns.put("imgPath", img);
-                eventIns.put("img","/uploadc/contents/image/event/" + eventCode + ".png");
-                eventIns.put("link", link);
-                eventIns.put("eventCode", eventCode);
-                eventIns.put("siteType", siteType);
-                eventIns.put("start", startDate);
-                eventIns.put("end", endDate);
-                eventIns.put("flag", flag);
+//                Map<String, String> eventIns = new HashMap<>();
+//                eventIns.put("title", title);
+//                eventIns.put("content", content);
+//                eventIns.put("imgPath", img);
+//                eventIns.put("img","/uploadc/contents/image/event/" + eventCode + ".png");
+//                eventIns.put("link", link);
+//                eventIns.put("eventCode", eventCode);
+//                eventIns.put("siteType", siteType);
+//                eventIns.put("start", startDate);
+//                eventIns.put("end", endDate);
+//                eventIns.put("flag", flag);
 
+                Event eventIns = new Event(title, content, img, "/uploadc/contents/image/event/" + eventCode + ".png", link, eventCode, siteType, startDate, endDate, flag);
                 eventList.add(eventIns);
 
             }

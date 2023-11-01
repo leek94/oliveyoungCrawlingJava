@@ -15,8 +15,9 @@ public class Event {
     private String siteType;
     private String start;
     private String end;
+    private String flag;
 
-    public Event(String title, String content, String imgPath, String img, String link, String eventCode, String siteType, String start, String end) {
+    public Event(String title, String content, String imgPath, String img, String link, String eventCode, String siteType, String start, String end, String flag) {
         this.title = title;
         this.content = content;
         this.imgPath = imgPath;
@@ -26,5 +27,6 @@ public class Event {
         this.siteType = siteType;
         this.start = start;
         this.end = end;
+        this.flag = flag;
     }
 }
