@@ -5,10 +5,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import util.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ExperienceCrawling {
     public static void main(String[] args) {
@@ -32,8 +34,6 @@ public class ExperienceCrawling {
                     experience = experience + "&pageIdx=" + page;
                     doc = Jsoup.connect(experience).get();
                     page++;
-
-                    //여기서 2페이지로 넘어가야하는데 안넘어감
                 }
 
                 Elements tag = doc.select("div.event_apply_list > ul.inner > li");
@@ -42,20 +42,28 @@ public class ExperienceCrawling {
 
                 for(Element tagItem : tag){
                     Element titleElement = tagItem.selectFirst("p.dec1");
-                    String title = titleElement.text();
+                    String title = common.nullCheck(titleElement);
 
                     Element contentElement = tagItem.selectFirst("p.dec2");
-                    String content = tagItem.text();
+                    String content = common.nullCheck(tagItem);
 
                     Element imgElement = tagItem.selectFirst("img");
-                    String img = imgElement.attr("src");
+                    String img = Optional.ofNullable(imgElement)
+                            .map(element -> element.attr("src"))
+                            .orElse("");
 
                     Element eventRecruitElement =tagItem.selectFirst("ul.area");
-                    String eventRecruit = eventRecruitElement.text().replace("\n","");
+                    String eventRecruit = Optional.ofNullable(eventRecruitElement)
+                            .map(element -> element.text().replace("\n", ""))
+                            .orElse("");
 
                     String link = experience;
 
-                    String eventCode = imgElement.attr("src").split("/")[imgElement.attr("src").split("/").length - 1].split("ko")[0];
+                    String eventCode = Optional.ofNullable(imgElement)
+                            .map(element -> element.attr("src"))
+                            .map(src -> src.split("/"))
+                            .map(splitted -> splitted[splitted.length - 1].split("ko")[0])
+                            .orElse("");
 
                     Experience experienceIns = new Experience(title, content, img, link, eventCode, siteType, startDate, endDate, eventRecruit);
                     experienceList.add(experienceIns);
