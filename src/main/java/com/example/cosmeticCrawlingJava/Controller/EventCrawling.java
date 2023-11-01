@@ -22,6 +22,7 @@ public class EventCrawling {
         //이벤트 페이지 링크 주소 확인 필요!!
 
 
+
         try{
             Document doc = Jsoup.connect(eventLink).get();
             Elements tag = doc.select("div.event_tab_cont > ul > li");
