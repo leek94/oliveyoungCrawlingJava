@@ -23,9 +23,9 @@ public class Crawling {
 
 
         try {
+
             // URL을 직접 연결하여 HTML 문서를 가져옵니다.
             Document document = Jsoup.connect(url).get();
-
             // 이후, document 객체를 사용하여 파싱할 수 있습니다.
 
             Elements depth1Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > p > a");// 여러개 나옴
