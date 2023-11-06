@@ -166,7 +166,7 @@ public class Crawling {
                             row++;
 
                             //Create a Product object and add it to the product list
-                            Product product = new Product(img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", info,
+                            Product product = new Product(null,img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", info,
                                     prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
                                     soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
                             productList.add(product);

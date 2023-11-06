@@ -1,6 +1,19 @@
 package entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "product")
+@Data
+@NoArgsConstructor
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String img;
     private String imgPath;
     private String info;
@@ -16,7 +29,8 @@ public class Product {
     private String siteType;
     private String brand;
 
-    public Product(String img, String imgPath, String info, String prodName, String prodCode, int price, int bePrice, double sale, String soldOut, String siteDepth1, String siteDepth2, String siteDepth3, String siteType, String brand) {
+    public Product(Long id,String img, String imgPath, String info, String prodName, String prodCode, int price, int bePrice, double sale, String soldOut, String siteDepth1, String siteDepth2, String siteDepth3, String siteType, String brand) {
+        this.id = null;
         this.img = img;
         this.imgPath = imgPath;
         this.info = info;
