@@ -1,9 +1,11 @@
 package com.example.cosmeticCrawlingJava.service;
 
 import com.example.cosmeticCrawlingJava.repository.CcTempProductRepository;
+import com.example.cosmeticCrawlingJava.repository.ProductHistoryRepository;
 import com.example.cosmeticCrawlingJava.repository.ProductRepository;
 import entity.CcTempProduct;
 import entity.Product;
+import entity.ProductHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private CcTempProductRepository ccTempProductRepository;
+    @Autowired
+    private ProductHistoryRepository productHistoryRepository;
 
     private Logger logger = Logger.getLogger(ProductService.class.getName());
 
@@ -65,6 +69,16 @@ public class ProductService {
                         product.setImg(filePath);
                         productRepository.save(product);
 
+                        ProductHistory productHistory = new ProductHistory();
+                        productHistory.setHistoryNo(product.getSiteType() + formattedDateTime + randomNumber);
+                        productHistory.setProductNo(product.getId());
+                        productHistory.setSiteType(product.getSiteType());
+                        productHistory.setProdCode(product.getProdCode());
+                        productHistory.setPrice(product.getPrice());
+
+                        //제품 이력 저장
+                        productHistoryRepository.save(productHistory);
+                        logger.info("새 제품이 추가되었습니다");
 
 
                     }

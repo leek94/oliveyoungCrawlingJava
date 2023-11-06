@@ -21,6 +21,6 @@ public class ProductHistory {
     private Long productNo;
     private String siteType;
     private String prodCode;
-    private BigDecimal price;
+    private int price;
 
 }
