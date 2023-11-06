@@ -32,6 +32,15 @@ public class ProductService {
                 ccTempProductRepository.save(ccTempProduct);
 
 
+                Product foundProduct = productRepository.findByComplexAttributes(
+                        product.getProdCode(),
+                        product.getSiteType(),
+                        product.getSiteDepth1(),
+                        product.getSiteDepth2(),
+                        product.getSiteDepth3()
+                );
+
+
             }catch (DataIntegrityViolationException e){
                 if(e.getMessage().contains("Duplicate entry")){
                     logger.warning("Integrity error occurred: Duplicate entry");
