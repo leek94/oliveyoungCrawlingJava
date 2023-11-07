@@ -3,6 +3,9 @@ package com.example.cosmeticCrawlingJava.util;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import org.jsoup.nodes.Element;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +13,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.Properties;
 
 public class common {
 
@@ -79,7 +85,47 @@ public class common {
         return filePath;
     }
 
-    public static String sendMail(String message, String siteType) {
-        return "";
+    public static void sendMail(String message, String siteType) {
+        try{
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = now.format(formatter);
+
+            String title = siteType + " " + formattedDateTime + "오류 발생";
+            String content = message;
+
+            // SMTP 서버 설정
+            Properties properties = new Properties();
+            properties.put("mail.smtp.host", "smtp.naver.com");
+            properties.put("mail.smtp.auth", "true");
+            properties.put("mail.smtp.port", "587");
+
+            // 계정 정보 설정
+            String username = "solutionfocus@naver.com";
+            String password = "!solfocus0515";
+
+            // 메일 수신자 설정
+            String receiver = "jh@solutionfocus.co.kr";
+
+            //메일 세션 생성
+            Session session = Session.getDefaultInstance(properties, new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            });
+
+            //메시지 생성
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(username));
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress((receiver)));
+            msg.setSubject(title);
+            msg.setText(content);
+
+            //메일 전송
+            Transport.send(msg);
+
+        } catch (MessagingException e){
+            e.printStackTrace();
+        }
     }
 }

@@ -10,15 +10,12 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.example.cosmeticCrawlingJava.util.common.nullCheck;
+import static com.example.cosmeticCrawlingJava.util.common.sendMail;
 
 public class EventCrawling {
     public static void main(String[] args) {
         String siteType = "OL";
         List<Event> eventList = new ArrayList<>();
-//        String eventLink = "https://www.oliveyoung.co.kr/store/main/getEventList.do?evtType=20";
-        //이벤트 페이지 링크 주소 확인 필요!!
-
-
 
         try{
             String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
@@ -95,6 +92,7 @@ public class EventCrawling {
 
 
         }catch (IOException e){
+            sendMail(e.getMessage(), siteType);
             e.printStackTrace();
         }
     }
