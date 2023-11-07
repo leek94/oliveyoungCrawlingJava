@@ -15,12 +15,18 @@ public class EventCrawling {
     public static void main(String[] args) {
         String siteType = "OL";
         List<Event> eventList = new ArrayList<>();
-        String eventLink = "https://www.oliveyoung.co.kr/store/main/getEventList.do?evtType=20";
+//        String eventLink = "https://www.oliveyoung.co.kr/store/main/getEventList.do?evtType=20";
         //이벤트 페이지 링크 주소 확인 필요!!
 
 
 
         try{
+            String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
+            Document document = Jsoup.connect(url).get();
+            Element eventLinkElement = document.selectFirst("#gnbWrap > ul > li:nth-child(8) > a");
+            String eventLink = eventLinkElement.attr("href");
+
+            System.out.println("eventLink : " + eventLink);
             Document doc = Jsoup.connect(eventLink).get();
             Elements tag = doc.select("div.event_tab_cont > ul > li");
 

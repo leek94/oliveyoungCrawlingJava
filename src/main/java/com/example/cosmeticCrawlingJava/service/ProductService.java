@@ -6,6 +6,7 @@ import com.example.cosmeticCrawlingJava.repository.ProductRepository;
 import com.example.cosmeticCrawlingJava.entity.CcTempProduct;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.entity.ProductHistory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,18 @@ import java.util.logging.Logger;
 @Service
 public class ProductService {
 
+    private final ProductRepository productRepository;
+    private final CcTempProductRepository ccTempProductRepository;
+    private final ProductHistoryRepository productHistoryRepository;
+
     @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CcTempProductRepository ccTempProductRepository;
-    @Autowired
-    private ProductHistoryRepository productHistoryRepository;
+    public ProductService(ProductRepository productRepository,
+                          CcTempProductRepository ccTempProductRepository,
+                          ProductHistoryRepository productHistoryRepository) {
+        this.productRepository = productRepository;
+        this.ccTempProductRepository = ccTempProductRepository;
+        this.productHistoryRepository = productHistoryRepository;
+    }
 
     private Logger logger = Logger.getLogger(ProductService.class.getName());
 
@@ -112,6 +119,18 @@ public class ProductService {
 //            }
         }
     }
+
+    @Transactional
+    public int countBySiteType(String siteType) {
+        try {
+            int count = productRepository.countBySiteType(siteType);
+            return (count > 0) ? 1 : 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
 
 }
