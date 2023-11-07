@@ -44,8 +44,9 @@ public class common {
     }
 
     public static String downloadImage(Product product) {
-        String fileDirectory = IMAGE_DIRECTORY + product.getSiteType() + "/";
+//        String fileDirectory = IMAGE_DIRECTORY + product.getSiteType() + "/";
         //"/uploadc/contents/image/OL/"
+        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
         String filePath = fileDirectory + product.getProdCode() + ".png";
         //"/uploadc/contents/image/OL/A000000166675.png"
 
