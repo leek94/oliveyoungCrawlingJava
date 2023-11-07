@@ -1,4 +1,4 @@
-package entity;
+package com.example.cosmeticCrawlingJava.entity;
 
 public class Experience {
     String title;

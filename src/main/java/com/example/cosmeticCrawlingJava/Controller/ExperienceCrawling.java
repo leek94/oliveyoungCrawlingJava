@@ -1,11 +1,11 @@
 package com.example.cosmeticCrawlingJava.Controller;
 
-import entity.Experience;
+import com.example.cosmeticCrawlingJava.entity.Experience;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import util.common;
+import com.example.cosmeticCrawlingJava.util.common;
 
 import java.io.IOException;
 import java.util.ArrayList;

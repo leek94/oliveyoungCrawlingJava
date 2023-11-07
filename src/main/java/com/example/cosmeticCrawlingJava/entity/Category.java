@@ -1,4 +1,4 @@
-package entity;
+package com.example.cosmeticCrawlingJava.entity;
 
 public class Category {
     private String siteDepth1;

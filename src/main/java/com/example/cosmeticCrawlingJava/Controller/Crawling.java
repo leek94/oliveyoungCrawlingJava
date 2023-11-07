@@ -1,12 +1,12 @@
 package com.example.cosmeticCrawlingJava.Controller;
 
-import entity.Category;
-import entity.Product;
+import com.example.cosmeticCrawlingJava.entity.Category;
+import com.example.cosmeticCrawlingJava.entity.Product;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import util.common;
+import com.example.cosmeticCrawlingJava.util.common;
 
 import java.io.IOException;
 import java.util.*;

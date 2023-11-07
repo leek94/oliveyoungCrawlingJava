@@ -1,13 +1,11 @@
 package com.example.cosmeticCrawlingJava.service;
 
 import com.example.cosmeticCrawlingJava.repository.CcTempProductRepository;
-import entity.CcTempProduct;
-import entity.Product;
+import com.example.cosmeticCrawlingJava.entity.CcTempProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 public class CcTempProductService {

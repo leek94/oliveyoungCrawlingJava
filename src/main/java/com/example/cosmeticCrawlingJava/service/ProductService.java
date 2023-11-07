@@ -3,22 +3,15 @@ package com.example.cosmeticCrawlingJava.service;
 import com.example.cosmeticCrawlingJava.repository.CcTempProductRepository;
 import com.example.cosmeticCrawlingJava.repository.ProductHistoryRepository;
 import com.example.cosmeticCrawlingJava.repository.ProductRepository;
-import entity.CcTempProduct;
-import entity.Product;
-import entity.ProductHistory;
+import com.example.cosmeticCrawlingJava.entity.CcTempProduct;
+import com.example.cosmeticCrawlingJava.entity.Product;
+import com.example.cosmeticCrawlingJava.entity.ProductHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import com.example.cosmeticCrawlingJava.util.common;
 
 import javax.transaction.Transactional;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,7 +19,6 @@ import java.util.logging.Logger;
 
 @Service
 public class ProductService {
-    private static final String IMAGE_DIRECTORY = "/uploadc/contents/image/";
 
     @Autowired
     private ProductRepository productRepository;
@@ -40,7 +32,7 @@ public class ProductService {
     @Transactional
     public void processProducts(List<Product> productList, int productCount) {
         for (Product product : productList) {
-            try{
+            try {
                 CcTempProduct ccTempProduct = new CcTempProduct();
                 ccTempProduct.setProdCode(product.getProdCode());
                 ccTempProduct.setSiteType(product.getSiteType());
@@ -65,7 +57,7 @@ public class ProductService {
 
                 if (productCount == 0 || foundProduct == null) {
                     if (foundProduct.getPrice() > 0) {
-                        String filePath = downloadImage(foundProduct);
+                        String filePath = common.downloadImage(foundProduct);
                         product.setImg(filePath);
                         productRepository.save(product);
 
@@ -79,48 +71,47 @@ public class ProductService {
                         //제품 이력 저장
                         productHistoryRepository.save(productHistory);
                         logger.info("새 제품이 추가되었습니다");
+                    }
+                    continue;
+                }
 
+                if (!foundProduct.getImg().equals(product.getImg())) {
+                    String filePath = common.downloadImage(product);
+                    product.setImg(filePath);
+                    productRepository.save(product);
+                } else if (!foundProduct.getProdName().equals(product.getProdName()) ||
+                        !foundProduct.getSoldOut().equals(product.getSoldOut()) ||
+                        !foundProduct.getBrand().equals(product.getBrand())) {
+                    productRepository.save(product);
+                } else {
+                    if (foundProduct.getPrice() != (product.getPrice())) {
+                        ProductHistory productHistory = new ProductHistory();
+                        productHistory.setHistoryNo(product.getSiteType() + formattedDateTime + randomNumber);
+                        productHistory.setProductNo(product.getId());
+                        productHistory.setSiteType(product.getSiteType());
+                        productHistory.setProdCode(product.getProdCode());
+                        productHistory.setPrice(product.getPrice());
 
+                        if (product.getSiteType().equals("CL") && product.getSoldOut().equals("일시품절")) {
+                            product.setPrice(foundProduct.getPrice());
+                            productHistory.setPrice(foundProduct.getPrice());
+                        }
+
+                        //제품 이력 저장
+                        productHistoryRepository.save(productHistory);
+                        productRepository.save(product);
                     }
                 }
-
-
-            }catch (DataIntegrityViolationException e){
-                if(e.getMessage().contains("Duplicate entry")){
-                    logger.warning("Integrity error occurred: Duplicate entry");
-                }
+            }catch (DataIntegrityViolationException e) {
+                logger.warning("예외가 발생했습니다");
             }
+//            }catch (UnsupportedEncodingException e) {
+//                common.sendMail(e.getMessage(), product.getSiteType());
+//            }catch (IOException e) {
+//                logger.warning(product.getProdCode() + "중복");
+//            }
         }
     }
 
-    public String downloadImage(Product product) {
-        String fileDirectory = IMAGE_DIRECTORY + product.getSiteType() + "/";
-        String filePath = fileDirectory + product.getProdCode() + ".png";
 
-        try{
-            URL url = new URL(product.getImgPath());
-            InputStream inputStream = url.openStream();
-
-            Path path = Paths.get(fileDirectory);
-            Files.createDirectories(path);
-
-            if (!Files.exists(Paths.get(filePath))) {
-                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, bytesRead);
-                }
-                fileOutputStream.close();
-            }
-
-            inputStream.close();
-        } catch (IOException e){
-            e.printStackTrace();
-
-        }
-        return filePath;
-    }
 }

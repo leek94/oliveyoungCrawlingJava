@@ -1,6 +1,6 @@
 package com.example.cosmeticCrawlingJava.Controller;
 
-import entity.Event;
+import com.example.cosmeticCrawlingJava.entity.Event;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +9,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.*;
 
-import static util.common.nullCheck;
+import static com.example.cosmeticCrawlingJava.util.common.nullCheck;
 
 public class EventCrawling {
     public static void main(String[] args) {

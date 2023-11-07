@@ -1,4 +1,4 @@
-package entity;
+package com.example.cosmeticCrawlingJava.entity;
 
 import lombok.Getter;
 import lombok.Setter;
