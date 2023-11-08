@@ -3,6 +3,11 @@ package com.example.cosmeticCrawlingJava.Controller;
 import com.example.cosmeticCrawlingJava.entity.Category;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.service.ProductService;
+import com.example.cosmeticCrawlingJava.util.ReturnMessage;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,8 +16,11 @@ import com.example.cosmeticCrawlingJava.util.common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class Crawling {
@@ -32,7 +40,29 @@ public class Crawling {
         String siteDepth1 = "";
         String siteDepth2 = "";
 
+        int maxRetries = 3;
+        int retryCount = 0;
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        Logger logger = Logger.getLogger(Crawling.class.getName());
         //TODO : 최대 3번 연결 시도 while문 작성 필요
+        while(retryCount < maxRetries)
+            try{
+                HttpGet request = new HttpGet(url); // url 페이지 요청
+                HttpResponse response = httpClient.execute(request);
+
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    break;
+                }
+                retryCount++;
+            } catch(IOException e){
+                logger.info("서버와 연결이 불안정해 다시 시도합니다...." + retryCount);
+                retryCount++;
+
+                if (retryCount == 3) {
+                    common.sendMail(ReturnMessage.CONNECTION.getMessage(), siteType);
+                    System.exit(0);
+                }
+            }
 
 
         try {
@@ -151,27 +181,27 @@ public class Crawling {
 //                                .map(Element::text)
 //                                .orElse(null); // 세일 안할 경우 null 값이 반환되서 Optional로 잡아줌
 
-                        Map<String, Object> ins = new HashMap<>();
-                        ins.put("imgPath", img);
-                        ins.put("img", "/uploadc/cpmtents/image/" + siteType + "/" + prodCode + ".png");
-                        ins.put("img2", "");
-                        ins.put("info", info);
-                        ins.put("infoCoupang", "https://link.coupang.com/a/3IhPI");
-                        ins.put("prodName", prodName);
-                        ins.put("prodCode", prodCode);
-                        ins.put("price", price); //String 값 들어가 있음
-                        ins.put("bePrice", bePrice);
-                        ins.put("sale", common.calculateDiscountPercent(bePrice, price)); // int로 변경
-                        ins.put("soldOut", soldOut);
-                        System.out.println(soldOut);
-                        //TODO : for문이 돌아가서 저장된 리스트에서 첫번째 값부터 불러와지면서 값이 들어가짐
-                        ins.put("siteDepth1", siteDepth1);
-                        ins.put("siteDepth2", siteDepth2);
-                        //TODO : for 문이 끝까지 돌아서 siteDepth1 : 남성, siteDepth2 : 바디케어 값이 들어가 있음
-                        //TODO : 그래서 위에 처럼 저장된 List에서 객체 순서대로 불러와야 올바른 값이 들어감!!!
-                        ins.put("siteDepth3", siteDepth3Text); // text가 나와야함
-                        ins.put("siteType", siteType);
-                        ins.put("brand", brand);
+//                        Map<String, Object> ins = new HashMap<>();
+//                        ins.put("imgPath", img);
+//                        ins.put("img", "/uploadc/cpmtents/image/" + siteType + "/" + prodCode + ".png");
+//                        ins.put("img2", "");
+//                        ins.put("info", info);
+//                        ins.put("infoCoupang", "https://link.coupang.com/a/3IhPI");
+//                        ins.put("prodName", prodName);
+//                        ins.put("prodCode", prodCode);
+//                        ins.put("price", price); //String 값 들어가 있음
+//                        ins.put("bePrice", bePrice);
+//                        ins.put("sale", common.calculateDiscountPercent(bePrice, price)); // int로 변경
+//                        ins.put("soldOut", soldOut);
+//                        System.out.println(soldOut);
+//                        //TODO : for문이 돌아가서 저장된 리스트에서 첫번째 값부터 불러와지면서 값이 들어가짐
+//                        ins.put("siteDepth1", siteDepth1);
+//                        ins.put("siteDepth2", siteDepth2);
+//                        //TODO : for 문이 끝까지 돌아서 siteDepth1 : 남성, siteDepth2 : 바디케어 값이 들어가 있음
+//                        //TODO : 그래서 위에 처럼 저장된 List에서 객체 순서대로 불러와야 올바른 값이 들어감!!!
+//                        ins.put("siteDepth3", siteDepth3Text); // text가 나와야함
+//                        ins.put("siteType", siteType);
+//                        ins.put("brand", brand);
 
                         row++;
 
@@ -180,7 +210,6 @@ public class Crawling {
                                 prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
                                 soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
                         productList.add(product);
-                        // TODO : 공통에 product 문 작성 필요
                         productService.processProducts(productList, prodCount);
                         productList.clear();
                     }

@@ -50,14 +50,13 @@ public class common {
     }
 
     public static String downloadImage(Product product) {
-//        String fileDirectory = IMAGE_DIRECTORY + product.getSiteType() + "/";
+        String fileDirectory = IMAGE_DIRECTORY + product.getSiteType() + "/";
         //"/uploadc/contents/image/OL/"
-        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
+//        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
         String filePath = fileDirectory + product.getProdCode() + ".png";
         //"/uploadc/contents/image/OL/A000000166675.png"
 
         try{
-            //TODO : 이미지 파일 넣어서 실행해 보자
             URL url = new URL(product.getImgPath());
             InputStream inputStream = url.openStream();
 
@@ -75,11 +74,9 @@ public class common {
                 }
                 fileOutputStream.close();
             }
-
             inputStream.close();
         } catch (IOException e){
             e.printStackTrace();
-
         }
         System.out.println("filePath : " + filePath);
         return filePath;
@@ -127,5 +124,13 @@ public class common {
         } catch (MessagingException e){
             e.printStackTrace();
         }
+    }
+    public void retryChecker(){
+        int maxRetries = 3;
+        int retryCount = 0;
+        String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
+
+
+
     }
 }

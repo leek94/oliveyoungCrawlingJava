@@ -92,7 +92,7 @@ public class EventCrawling {
 
 
         }catch (IOException e){
-            sendMail(e.getMessage(), siteType);
+            sendMail(returnmessage1.changEvent(), siteType);
             e.printStackTrace();
         }
     }
