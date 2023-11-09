@@ -188,6 +188,11 @@ public class Common {
         return null;
     }
 
+    public static void endCrawling(WebDriver driver, String siteType) {
+        log.info(siteType + "크롤링 종료");
+        System.exit(0);
+    }
+
     public static void main(String[] args) {
         Common.startCrawling("OL");
 

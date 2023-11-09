@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.example.cosmeticCrawlingJava.util.Common;
+import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ public class Crawling {
 
         String siteType = "OL";
         //TODO : driver 변수 추가 필요
+        WebDriver driver = ;
         String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
         String siteDepth1 = "";
         String siteDepth2 = "";
