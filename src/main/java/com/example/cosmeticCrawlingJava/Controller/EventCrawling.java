@@ -1,6 +1,7 @@
 package com.example.cosmeticCrawlingJava.Controller;
 
 import com.example.cosmeticCrawlingJava.entity.Event;
+import com.example.cosmeticCrawlingJava.util.ReturnMessage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,8 +10,8 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.*;
 
-import static com.example.cosmeticCrawlingJava.util.common.nullCheck;
-import static com.example.cosmeticCrawlingJava.util.common.sendMail;
+import static com.example.cosmeticCrawlingJava.util.Common.nullCheck;
+import static com.example.cosmeticCrawlingJava.util.Common.sendMail;
 
 public class EventCrawling {
     public static void main(String[] args) {
@@ -92,7 +93,7 @@ public class EventCrawling {
 
 
         }catch (IOException e){
-            sendMail(returnmessage1.changEvent(), siteType);
+            sendMail(ReturnMessage.CHANGE_CATEGORY.getMessage(), siteType);
             e.printStackTrace();
         }
     }

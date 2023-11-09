@@ -5,7 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.example.cosmeticCrawlingJava.util.common;
+import com.example.cosmeticCrawlingJava.util.Common;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,10 +42,10 @@ public class ExperienceCrawling {
 
                 for(Element tagItem : tag){
                     Element titleElement = tagItem.selectFirst("p.dec1");
-                    String title = common.nullCheck(titleElement);
+                    String title = Common.nullCheck(titleElement);
 
                     Element contentElement = tagItem.selectFirst("p.dec2");
-                    String content = common.nullCheck(tagItem);
+                    String content = Common.nullCheck(tagItem);
 
                     Element imgElement = tagItem.selectFirst("img");
                     String img = Optional.ofNullable(imgElement)

@@ -12,7 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.example.cosmeticCrawlingJava.util.common;
+import com.example.cosmeticCrawlingJava.util.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +59,7 @@ public class Crawling {
                 retryCount++;
 
                 if (retryCount == 3) {
-                    common.sendMail(ReturnMessage.CONNECTION.getMessage(), siteType);
+                    Common.sendMail(ReturnMessage.CONNECTION.getMessage(), siteType);
                     System.exit(0);
                 }
             }
@@ -149,14 +149,14 @@ public class Crawling {
                                 .orElse("");
 
                         Element brandElement = tagItem.selectFirst("span.tx_brand");
-                        String brand = common.nullCheck(brandElement);
+                        String brand = Common.nullCheck(brandElement);
 
                         Element prodNameElement = tagItem.selectFirst("p.tx_name");
-                        String prodName = common.nullCheck(prodNameElement);
+                        String prodName = Common.nullCheck(prodNameElement);
 
                         Element bePriceElement = tagItem.selectFirst("span.tx_org > span");
                         // Optional로 null 값을 스트링 값인 "0"으로 변경
-                        String bePrice = common.nullCheckPrice(bePriceElement);
+                        String bePrice = Common.nullCheckPrice(bePriceElement);
                         System.out.println("bePrice :" + bePrice);
 //                        String bePrice = Optional.ofNullable(bePriceElement)
 //                                .map(Element::text)
@@ -164,11 +164,11 @@ public class Crawling {
 //                                .orElse("0");// 정규 표현식으로 숫자가 아닌 문자는 전부 삭제
 
                         Element priceElement = tagItem.selectFirst("span.tx_cur > span");
-                        String price = common.nullCheckPrice(priceElement);
+                        String price = Common.nullCheckPrice(priceElement);
                         System.out.println("price :" + price);
 
                         Element soldOutElement = tagItem.selectFirst("span.soldout");
-                        String soldOut = common.nullCheck(soldOutElement);
+                        String soldOut = Common.nullCheck(soldOutElement);
                         System.out.println(soldOut);
 //                        String soldOut = Optional.ofNullable(soldOutElement)
 //                                .map(Element::text)
@@ -176,7 +176,7 @@ public class Crawling {
 
 
                         Element saleElement = tagItem.selectFirst("span.icon_flag.sale"); //span의 클래스 icon_flag와 클래스 sale 두개를 동시에 갖는 값을 뽑음
-                        String sale = common.nullCheck(saleElement);
+                        String sale = Common.nullCheck(saleElement);
 //                        String sale = Optional.ofNullable(saleElement)
 //                                .map(Element::text)
 //                                .orElse(null); // 세일 안할 경우 null 값이 반환되서 Optional로 잡아줌
@@ -207,7 +207,7 @@ public class Crawling {
 
                         //Create a Product object and add it to the product list
                         Product product = new Product(null, img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", info,
-                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
+                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), Common.calculateDiscountPercent(bePrice, price),
                                 soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
                         productList.add(product);
                         productService.processProducts(productList, prodCount);

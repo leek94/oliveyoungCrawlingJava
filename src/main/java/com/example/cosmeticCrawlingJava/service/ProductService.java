@@ -6,11 +6,10 @@ import com.example.cosmeticCrawlingJava.repository.ProductRepository;
 import com.example.cosmeticCrawlingJava.entity.CcTempProduct;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.entity.ProductHistory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import com.example.cosmeticCrawlingJava.util.common;
+import com.example.cosmeticCrawlingJava.util.Common;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -64,7 +63,7 @@ public class ProductService {
 
                 if (productCount == 0 || foundProduct == null) {
                     if (foundProduct.getPrice() > 0) {
-                        String filePath = common.downloadImage(foundProduct);
+                        String filePath = Common.downloadImage(foundProduct);
                         product.setImg(filePath);
                         productRepository.save(product);
 
@@ -83,7 +82,7 @@ public class ProductService {
                 }
 
                 if (!foundProduct.getImg().equals(product.getImg())) {
-                    String filePath = common.downloadImage(product);
+                    String filePath = Common.downloadImage(product);
                     product.setImg(filePath);
                     productRepository.save(product);
                 } else if (!foundProduct.getProdName().equals(product.getProdName()) ||
