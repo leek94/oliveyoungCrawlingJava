@@ -1,9 +1,10 @@
-package com.example.cosmeticCrawlingJava.Controller;
+package com.example.cosmeticCrawlingJava.service;
 
 import com.example.cosmeticCrawlingJava.entity.Category;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.service.ProductService;
 import com.example.cosmeticCrawlingJava.util.ReturnMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -17,12 +18,11 @@ import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
+
+@Slf4j
 @Service
 public class Crawling {
 
@@ -37,7 +37,7 @@ public class Crawling {
 
         String siteType = "OL";
         //TODO : driver 변수 추가 필요
-        WebDriver driver = ;
+        WebDriver driver = Common.startCrawling(siteType);
         String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
         String siteDepth1 = "";
         String siteDepth2 = "";
@@ -45,7 +45,7 @@ public class Crawling {
         int maxRetries = 3;
         int retryCount = 0;
         HttpClient httpClient = HttpClientBuilder.create().build();
-        Logger logger = Logger.getLogger(Crawling.class.getName());
+
         //TODO : 최대 3번 연결 시도 while문 작성 필요
         while(retryCount < maxRetries)
             try{
@@ -57,7 +57,7 @@ public class Crawling {
                 }
                 retryCount++;
             } catch(IOException e){
-                logger.info("서버와 연결이 불안정해 다시 시도합니다...." + retryCount);
+                log.info("서버와 연결이 불안정해 다시 시도합니다...." + retryCount);
                 retryCount++;
 
                 if (retryCount == 3) {

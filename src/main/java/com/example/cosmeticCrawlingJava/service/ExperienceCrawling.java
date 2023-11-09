@@ -1,4 +1,4 @@
-package com.example.cosmeticCrawlingJava.Controller;
+package com.example.cosmeticCrawlingJava.service;
 
 import com.example.cosmeticCrawlingJava.entity.Experience;
 import org.jsoup.Jsoup;

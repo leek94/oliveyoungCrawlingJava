@@ -7,10 +7,12 @@ import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.sql.DataSource;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +28,15 @@ import java.util.Properties;
 
 @Slf4j
 public class Common {
+
+
+    private static DataSource dataSource;
+
+//    @Autowired
+//    public Common(DataSource dataSource) {
+//        this.dataSource = dataSource;
+//    }
+
 
     String siteType = "OL";
 
@@ -162,7 +173,8 @@ public class Common {
         // JDBC로 데이터베이스 연결
         try {
 //            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_name", "username", "password");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world", "root", "leek0929"); //로컬 데이터베이스
+//            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world", "root", "leek0929"); //로컬 데이터베이스
+            Connection connection = dataSource.getConnection();
             String findBatchYn = "SELECT batch_yn FROM cc_site WHERE site_type = ?";
             PreparedStatement statement = connection.prepareStatement(findBatchYn);
             statement.setString(1, siteType); // SQL injection 공격 방지하려고 동적으로 값 설정

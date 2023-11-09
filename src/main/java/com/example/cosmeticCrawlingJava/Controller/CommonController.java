@@ -8,6 +8,7 @@ import com.example.cosmeticCrawlingJava.util.Common;
 
 @Controller
 public class CommonController {
+
     @GetMapping("/test/123")
     public String show(Model model) {
         Product product = new Product();

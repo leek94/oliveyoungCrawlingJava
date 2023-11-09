@@ -1,4 +1,4 @@
-package com.example.cosmeticCrawlingJava.Controller;
+package com.example.cosmeticCrawlingJava.service;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
