@@ -7,7 +7,6 @@ import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -31,12 +30,6 @@ public class Common {
 
 
     private static DataSource dataSource;
-
-//    @Autowired
-//    public Common(DataSource dataSource) {
-//        this.dataSource = dataSource;
-//    }
-
 
     String siteType = "OL";
 
