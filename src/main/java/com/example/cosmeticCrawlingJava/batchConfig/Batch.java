@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 @Configuration
 public class Batch {
+    private final CustomTasklet customTasklet;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -29,7 +30,7 @@ public class Batch {
     @Bean
     public Step TaskStep() {
         return stepBuilderFactory.get("taskStep")
-                .tasklet(new CustomTasklet())
+                .tasklet(customTasklet)
                 .build();
 
     }

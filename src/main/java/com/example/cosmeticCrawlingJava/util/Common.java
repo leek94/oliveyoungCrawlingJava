@@ -7,15 +7,12 @@ import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.sql.DataSource;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,12 +38,6 @@ public class Common {
 
     @Value("${spring.datasource.password}")
     private  String password;
-
-    @Resource
-    private static DataSource dataSource;
-
-
-
 
     String siteType = "OL";
 
@@ -217,10 +208,5 @@ public class Common {
     public static void endCrawling(WebDriver driver, String siteType) {
         log.info(siteType + "크롤링 종료");
         System.exit(0);
-    }
-
-    public static void main(String[] args) {
-        Common common = new Common();
-        common.startCrawling("OL");
     }
 }

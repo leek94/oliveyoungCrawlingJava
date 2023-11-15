@@ -19,7 +19,7 @@ public class Iutest {
         // options.addArguments("headless");
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.google.com/");
-        driver.findElement(By.name("q")).sendKeys("아이유");
+        driver.findElement(By.name("q")).sendKeys("ghfhf");
         driver.findElement(By.name("q")).sendKeys(Keys.ENTER);
         // 브라우저 닫기
         if (driver != null) {

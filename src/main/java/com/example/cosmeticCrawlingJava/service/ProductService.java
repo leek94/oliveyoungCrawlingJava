@@ -6,6 +6,7 @@ import com.example.cosmeticCrawlingJava.repository.ProductRepository;
 import com.example.cosmeticCrawlingJava.entity.CcTempProduct;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.entity.ProductHistory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,10 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -33,8 +36,6 @@ public class ProductService {
         this.productHistoryRepository = productHistoryRepository;
     }
 
-    private Logger logger = Logger.getLogger(ProductService.class.getName());
-
     @Transactional
     public void processProducts(List<Product> productList, int productCount) {
         for (Product product : productList) {
@@ -42,9 +43,9 @@ public class ProductService {
                 CcTempProduct ccTempProduct = new CcTempProduct();
                 ccTempProduct.setProdCode(product.getProdCode());
                 ccTempProduct.setSiteType(product.getSiteType());
-                ccTempProductRepository.save(ccTempProduct);
+                ccTempProductRepository.save(ccTempProduct); // cc 템플릿에 저장
 
-
+                // 저장되어있는 값을 받아옴 TODO : Optional로 감싸야하는 거 아닌지?
                 Product foundProduct = productRepository.findByComplexAttributes(
                         product.getProdCode(),
                         product.getSiteType(),
@@ -52,6 +53,7 @@ public class ProductService {
                         product.getSiteDepth2(),
                         product.getSiteDepth3()
                 );
+
                 //난수 발생
                 long randomNum = (long) (Math.random() * (10000000000L - 1000000000L) + 1000000000L);
                 String randomNumber = Long.toString(randomNum);
@@ -62,8 +64,8 @@ public class ProductService {
                 String formattedDateTime = now.format(formatter);
 
                 if (productCount == 0 || foundProduct == null) {
-                    if (foundProduct.getPrice() > 0) {
-                        String filePath = Common.downloadImage(foundProduct);
+                    if (product.getPrice() > 0) {
+                        String filePath = Common.downloadImage(product);
                         product.setImg(filePath);
                         productRepository.save(product);
 
@@ -76,7 +78,7 @@ public class ProductService {
 
                         //제품 이력 저장
                         productHistoryRepository.save(productHistory);
-                        logger.info("새 제품이 추가되었습니다");
+                        log.info("새 제품이 추가되었습니다");
                     }
                     continue;
                 }
@@ -109,7 +111,7 @@ public class ProductService {
                     }
                 }
             }catch (DataIntegrityViolationException e) {
-                logger.warning("예외가 발생했습니다");
+                log.warn("예외가 발생했습니다");
             }
 //            }catch (UnsupportedEncodingException e) {
 //                common.sendMail(e.getMessage(), product.getSiteType());

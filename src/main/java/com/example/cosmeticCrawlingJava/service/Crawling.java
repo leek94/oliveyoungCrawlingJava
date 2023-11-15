@@ -83,7 +83,7 @@ public class Crawling {
 
 
             // TODO : count문 데이터베이스 연결하는 식 작성 필요
-            int prodCount = productService.countBySiteType(siteType);
+            int prodCount = productService.countBySiteType(siteType); //값이 있으면 1 없으면 0 반환
 
             for (Element depth1 : depth1Elements) {  // 여러번
                 siteDepth1 = depth1.text();  //스킨케어
@@ -101,12 +101,6 @@ public class Crawling {
                 }
             }
 
-
-//            for (Category category : categories) {
-//                System.out.println("siteDepth1: " + category.getSiteDepth1());
-//                System.out.println("siteDepth2: " + category.getSiteDepth2());
-//                System.out.println("siteLink: " + category.getSiteLink());
-//            }
             for (Category category : categories) { //58개 들어옴
                 String depth2Url = "https://www.oliveyoung.co.kr/store/display/getMCategoryList.do?dispCatNo=" + category.getSiteLink();
                 Document document1 = Jsoup.connect(depth2Url).get();
@@ -161,7 +155,6 @@ public class Crawling {
                         Element bePriceElement = tagItem.selectFirst("span.tx_org > span");
                         // Optional로 null 값을 스트링 값인 "0"으로 변경
                         String bePrice = Common.nullCheckPrice(bePriceElement);
-                        System.out.println("bePrice :" + bePrice);
 //                        String bePrice = Optional.ofNullable(bePriceElement)
 //                                .map(Element::text)
 //                                .map(text -> text.replaceAll("[^0-9]", ""))
@@ -210,11 +203,11 @@ public class Crawling {
                         row++;
 
                         //Create a Product object and add it to the product list
-                        Product product = new Product(null, img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", info,
+                        Product product = new Product(null,"/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", img, info,
                                 prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), Common.calculateDiscountPercent(bePrice, price),
                                 soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
                         productList.add(product);
-                        productService.processProducts(productList, prodCount);
+                        productService.processProducts(productList, prodCount); //prodCount 이미 있으면 1 없으면 0
                         productList.clear();
                     }
                 }
