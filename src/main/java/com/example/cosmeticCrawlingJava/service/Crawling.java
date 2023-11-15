@@ -4,6 +4,8 @@ import com.example.cosmeticCrawlingJava.entity.Category;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.service.ProductService;
 import com.example.cosmeticCrawlingJava.util.ReturnMessage;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,6 +18,7 @@ import org.jsoup.select.Elements;
 import com.example.cosmeticCrawlingJava.util.Common;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,20 +27,19 @@ import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class Crawling {
 
-    private final ProductService productService;
 
-    @Autowired
-    public Crawling(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductService productService;
+    private final Common common;
 
     public void startCrawling() {
 
         String siteType = "OL";
         //TODO : driver 변수 추가 필요
-        WebDriver driver = Common.startCrawling(siteType);
+//        WebDriver driver = Common.startCrawling(siteType, url, name, password);
+        WebDriver driver = common.startCrawling(siteType);
         String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
         String siteDepth1 = "";
         String siteDepth2 = "";

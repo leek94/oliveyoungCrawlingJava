@@ -7,7 +7,11 @@ import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -26,10 +30,23 @@ import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
+@Component
 public class Common {
 
+    @Value("${spring.datasource.url}")
+    private  String url;
 
+    @Value("${spring.datasource.username}")
+    private  String name;
+
+    @Value("${spring.datasource.password}")
+    private  String password;
+
+    @Resource
     private static DataSource dataSource;
+
+
+
 
     String siteType = "OL";
 
@@ -148,7 +165,8 @@ public class Common {
         String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
     }
 
-    public static WebDriver startCrawling(String siteType){
+//    public static WebDriver startCrawling(String siteType , String url, String name, String password){
+    public WebDriver startCrawling(String siteType) {
 
         log.info(siteType + " 크롤링시작");
         WebDriverManager.chromedriver().setup(); // 드라이버 최신 버전 자동 업데이트
@@ -163,11 +181,14 @@ public class Common {
 
         WebDriver driver = new ChromeDriver(options);
 
+        log.info(siteType + "크롤릴 중간");
         // JDBC로 데이터베이스 연결
         try {
-//            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_name", "username", "password");
-//            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/world", "root", "leek0929"); //로컬 데이터베이스
-            Connection connection = dataSource.getConnection();
+            log.info(siteType + "크롤릴 중간 시작");
+
+            Connection connection = DriverManager.getConnection(url, name, password); //로컬 데이터베이스
+//            Connection connection = dataSource.getConnection(); // TODO : 현재 @Component로 받아와서 사용하는 방식으로 구현중 그런데 이렇게 하면 간단하게 테스트가 안됨 스프링 돌때매 @Values에 값이 들어옴 --> 테스트 방법 필요
+            log.info(siteType + "크롤릴 중간22");
             String findBatchYn = "SELECT batch_yn FROM cc_site WHERE site_type = ?";
             PreparedStatement statement = connection.prepareStatement(findBatchYn);
             statement.setString(1, siteType); // SQL injection 공격 방지하려고 동적으로 값 설정
@@ -199,7 +220,7 @@ public class Common {
     }
 
     public static void main(String[] args) {
-        Common.startCrawling("OL");
-
+        Common common = new Common();
+        common.startCrawling("OL");
     }
 }
