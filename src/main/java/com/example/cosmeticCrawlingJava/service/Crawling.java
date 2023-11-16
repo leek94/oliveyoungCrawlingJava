@@ -122,7 +122,6 @@ public class Crawling {
                     for (int k = 0; k < Integer.parseInt(productCount); k++) {
 
                         if (row == 24) {
-                            System.out.println(row);
                             String nextLink = depth3Url + "&pageIdx=" + page;
                             Document document3 = Jsoup.connect(nextLink).get();
                             tag = document3.select("#Contents > ul > li[data-index]:not([data-index*='\\D'])");
@@ -135,7 +134,7 @@ public class Crawling {
                         Element imgElement = tagItem.selectFirst("div > a > img"); // 앞의 이미지의 html을 저장
                         String img = Optional.ofNullable(imgElement)
                                 .map(element -> element.attr("src"))
-                                .orElse(""); //이미지의 절대 주소 저장
+                                .orElse(""); //이미지의 절대 주소 저장 http://형태
 
                         Element infoElement = tagItem.selectFirst("a.prd_thumb"); //a태크 prd_thumb 클래스가 처음 나오는 것이 저장됨
                         String info = Optional.ofNullable(infoElement)
@@ -162,11 +161,9 @@ public class Crawling {
 
                         Element priceElement = tagItem.selectFirst("span.tx_cur > span");
                         String price = Common.nullCheckPrice(priceElement);
-                        System.out.println("price :" + price);
 
                         Element soldOutElement = tagItem.selectFirst("span.soldout");
                         String soldOut = Common.nullCheck(soldOutElement);
-                        System.out.println(soldOut);
 //                        String soldOut = Optional.ofNullable(soldOutElement)
 //                                .map(Element::text)
 //                                .orElse(null);
@@ -177,6 +174,8 @@ public class Crawling {
 //                        String sale = Optional.ofNullable(saleElement)
 //                                .map(Element::text)
 //                                .orElse(null); // 세일 안할 경우 null 값이 반환되서 Optional로 잡아줌
+
+                        String infoCoupang = "https://link.coupang.com/a/3IhPI"; //여기서는 초기화하고 나중에 링크 변경해주는 배치가 따로 깃에 있음
 
 //                        Map<String, Object> ins = new HashMap<>();
 //                        ins.put("imgPath", img);
@@ -205,7 +204,7 @@ public class Crawling {
                         //Create a Product object and add it to the product list
                         Product product = new Product(null,"/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", img, info,
                                 prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), Common.calculateDiscountPercent(bePrice, price),
-                                soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
+                                soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand, infoCoupang);
                         productList.add(product);
                         productService.processProducts(productList, prodCount); //prodCount 이미 있으면 1 없으면 0
                         productList.clear();

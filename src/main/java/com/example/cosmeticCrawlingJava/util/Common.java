@@ -82,7 +82,7 @@ public class Common {
         //"/uploadc/contents/image/OL/A000000166675.png"
 
         try{
-            URL url = new URL(product.getImgPath());
+            URL url = new URL(product.getImg2());
             InputStream inputStream = url.openStream();
 
             Path path = Paths.get(fileDirectory);

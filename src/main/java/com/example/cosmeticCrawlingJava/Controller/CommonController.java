@@ -27,7 +27,7 @@ public class CommonController {
         Product product = new Product();
         product.setSiteType("OL");
         product.setProdCode("A000000166675");
-        product.setImgPath("https://cdn.imweb.me/upload/94dc5a2f83cd5.jpg");
+        product.setImg2("https://cdn.imweb.me/upload/94dc5a2f83cd5.jpg");
         String filePath = Common.downloadImage(product);
         model.addAttribute("filePath", filePath);
 
