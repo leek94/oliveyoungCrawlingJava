@@ -37,7 +37,6 @@ public class Crawling {
     public void startCrawling() {
 
         String siteType = "OL";
-        //TODO : driver 변수 추가 필요
 //        WebDriver driver = Common.startCrawling(siteType, url, name, password);
         WebDriver driver = common.startCrawling(siteType);
         String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
@@ -48,7 +47,7 @@ public class Crawling {
         int retryCount = 0;
         HttpClient httpClient = HttpClientBuilder.create().build();
 
-        //TODO : 최대 3번 연결 시도 while문 작성 필요
+        //최대 3번 연결 시도 while문
         while(retryCount < maxRetries)
             try{
                 HttpGet request = new HttpGet(url); // url 페이지 요청
@@ -82,7 +81,7 @@ public class Crawling {
             List<Product> productList = new ArrayList<>();
 
 
-            // TODO : count문 데이터베이스 연결하는 식 작성 필요
+            // count문 데이터베이스 연결하는 코드
             int prodCount = productService.countBySiteType(siteType); //값이 있으면 1 없으면 0 반환
 
             for (Element depth1 : depth1Elements) {  // 여러번
@@ -146,31 +145,31 @@ public class Crawling {
                                 .orElse("");
 
                         Element brandElement = tagItem.selectFirst("span.tx_brand");
-                        String brand = Common.nullCheck(brandElement);
+                        String brand = common.nullCheck(brandElement);
 
                         Element prodNameElement = tagItem.selectFirst("p.tx_name");
-                        String prodName = Common.nullCheck(prodNameElement);
+                        String prodName = common.nullCheck(prodNameElement);
 
                         Element bePriceElement = tagItem.selectFirst("span.tx_org > span");
                         // Optional로 null 값을 스트링 값인 "0"으로 변경
-                        String bePrice = Common.nullCheckPrice(bePriceElement);
+                        String bePrice = common.nullCheckPrice(bePriceElement);
 //                        String bePrice = Optional.ofNullable(bePriceElement)
 //                                .map(Element::text)
 //                                .map(text -> text.replaceAll("[^0-9]", ""))
 //                                .orElse("0");// 정규 표현식으로 숫자가 아닌 문자는 전부 삭제
 
                         Element priceElement = tagItem.selectFirst("span.tx_cur > span");
-                        String price = Common.nullCheckPrice(priceElement);
+                        String price = common.nullCheckPrice(priceElement);
 
                         Element soldOutElement = tagItem.selectFirst("span.soldout");
-                        String soldOut = Common.nullCheck(soldOutElement);
+                        String soldOut = common.nullCheck(soldOutElement);
 //                        String soldOut = Optional.ofNullable(soldOutElement)
 //                                .map(Element::text)
 //                                .orElse(null);
 
 
                         Element saleElement = tagItem.selectFirst("span.icon_flag.sale"); //span의 클래스 icon_flag와 클래스 sale 두개를 동시에 갖는 값을 뽑음
-                        String sale = Common.nullCheck(saleElement);
+                        String sale = common.nullCheck(saleElement);
 //                        String sale = Optional.ofNullable(saleElement)
 //                                .map(Element::text)
 //                                .orElse(null); // 세일 안할 경우 null 값이 반환되서 Optional로 잡아줌
@@ -203,7 +202,7 @@ public class Crawling {
 
                         //Create a Product object and add it to the product list
                         Product product = new Product(null,"/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", img, info,
-                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), Common.calculateDiscountPercent(bePrice, price),
+                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
                                 soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand, infoCoupang);
                         productList.add(product);
                         productService.processProducts(productList, prodCount); //prodCount 이미 있으면 1 없으면 0

@@ -41,7 +41,7 @@ public class ProductService {
                 ccTempProductRepository.save(ccTempProduct); // cc 템플릿에 저장
 
                 // 조건에 맞는 값을 받아옴 TODO : Optional로 감싸야하는 거 아닌지?
-                List<Product> foundProduct = ccproductRepository.findByComplexAttributes(
+                Product foundProduct = ccproductRepository.findByComplexAttributes(
                         product.getProdCode(),
                         product.getSiteType(),
                         product.getSiteDepth1(),
@@ -49,12 +49,12 @@ public class ProductService {
                         product.getSiteDepth3()
                 );
 
-                if (foundProduct.size() >1){
-
-                    System.out.println(foundProduct.get(0).getProdName());
-                    System.out.println(foundProduct.get(1).getProdName());
-                    return "갯수 두개 발생";
-                }
+//                if (foundProduct.size() >1){
+//
+//                    System.out.println(foundProduct.get(0).getProdName());
+//                    System.out.println(foundProduct.get(1).getProdName());
+//                    return "갯수 두개 발생";
+//                }
 
                 // 난수 발생 1000000000L ~ 10000000000L
                 long randomNum = (long) (Math.random() * (10000000000L - 1000000000L) + 1000000000L);
@@ -73,7 +73,7 @@ public class ProductService {
 
                         ProductHistory productHistory = new ProductHistory();
                         productHistory.setHistoryNo(product.getSiteType() + formattedDateTime + randomNumber);
-                        productHistory.setProductNo(product.getId());
+                        productHistory.setProductNo(product);
                         productHistory.setSiteType(product.getSiteType());
                         productHistory.setProdCode(product.getProdCode());
                         productHistory.setPrice(product.getPrice());
