@@ -1,5 +1,6 @@
 package com.example.cosmeticCrawlingJava.service;
 
+import com.example.cosmeticCrawlingJava.dto.ProductDTO;
 import com.example.cosmeticCrawlingJava.repository.CcProductHistoryRepository;
 import com.example.cosmeticCrawlingJava.repository.CcProductRepository;
 import com.example.cosmeticCrawlingJava.repository.CcTempProductRepository;
@@ -32,21 +33,21 @@ public class ProductService {
     private final CcProductHistoryRepository ccproductHistoryRepository;
 
     @Transactional
-    public String processProducts(List<Product> productList, int productCount) {
-        for (Product product : productList) {
+    public String processProducts(List<ProductDTO> productList, int productCount) {
+        for (ProductDTO productDTO : productList) {
             try {
                 CcTempProduct ccTempProduct = new CcTempProduct();
-                ccTempProduct.setProdCode(product.getProdCode());
-                ccTempProduct.setSiteType(product.getSiteType());
+                ccTempProduct.setProdCode(productDTO.getProdCode());
+                ccTempProduct.setSiteType(productDTO.getSiteType());
                 ccTempProductRepository.save(ccTempProduct); // cc 템플릿에 저장
 
                 // 조건에 맞는 값을 받아옴 TODO : Optional로 감싸야하는 거 아닌지?
                 Product foundProduct = ccproductRepository.findByComplexAttributes(
-                        product.getProdCode(),
-                        product.getSiteType(),
-                        product.getSiteDepth1(),
-                        product.getSiteDepth2(),
-                        product.getSiteDepth3()
+                        productDTO.getProdCode(),
+                        productDTO.getSiteType(),
+                        productDTO.getSiteDepth1(),
+                        productDTO.getSiteDepth2(),
+                        productDTO.getSiteDepth3()
                 );
 
 //                if (foundProduct.size() >1){
@@ -57,7 +58,7 @@ public class ProductService {
 //                }
 
                 // 난수 발생 1000000000L ~ 10000000000L
-                long randomNum = (long) (Math.random() * (10000000000L - 1000000000L) + 1000000000L);
+                long randomNum = (long)(Math.random() * (10000000000L - 1000000000L) + 1000000000L);
                 String randomNumber = Long.toString(randomNum);
 
                 //현재 날짜 형식 변경
@@ -66,17 +67,17 @@ public class ProductService {
                 String formattedDateTime = now.format(formatter);
 
                 if (productCount == 0 || foundProduct == null) { // siteType 확인, DB 저장된 값 확인
-                    if (product.getPrice() > 0) {
-                        String filePath = Common.downloadImage(product); // 이미지 다운로드
-                        product.setImg(filePath); // 이미지 경로 저장
-                        ccproductRepository.save(product); // 값 DB에 저장
+                    if (Integer.parseInt(productDTO.getPrice()) > 0) {
+                        String filePath = Common.downloadImage(productDTO); // 이미지 다운로드
+                        productDTO.setImg(filePath); // 이미지 경로 저장
+                        ccproductRepository.save(productDTO.toEntity()); // 값 DB에 저장
 
                         ProductHistory productHistory = new ProductHistory();
-                        productHistory.setHistoryNo(product.getSiteType() + formattedDateTime + randomNumber);
-                        productHistory.setProductNo(product);
-                        productHistory.setSiteType(product.getSiteType());
-                        productHistory.setProdCode(product.getProdCode());
-                        productHistory.setPrice(product.getPrice());
+                        productHistory.setHistoryNo(productDTO.getSiteType() + formattedDateTime + randomNumber);
+                        productHistory.setProductNo(foundProduct);
+                        productHistory.setSiteType(productDTO.getSiteType());
+                        productHistory.setProdCode(productDTO.getProdCode());
+                        productHistory.setPrice(Integer.parseInt(productDTO.getPrice()));
 
                         //제품 이력 저장
                         ccproductHistoryRepository.save(productHistory);
@@ -84,45 +85,40 @@ public class ProductService {
                     }
                     continue;
                 }
-                // 들어온 값과 DB의 Img값이 다를 경우
-//                if (!foundProduct.getImg().equals(product.getImg())) {
-//                    String filePath = Common.downloadImage(product);
-//                    product.setImg(filePath);
-//                    productRepository.save(product); //DB에 다시 저장
-//                } else if (!foundProduct.getProdName().equals(product.getProdName()) ||
-//                        !foundProduct.getSoldOut().equals(product.getSoldOut()) ||
-//                        !foundProduct.getBrand().equals(product.getBrand())) {
-//                    productRepository.save(product);
-//                } else {
-//                    if (foundProduct.getPrice() != (product.getPrice())) {
-//                        ProductHistory productHistory = new ProductHistory();
-//                        productHistory.setHistoryNo(product.getSiteType() + formattedDateTime + randomNumber);
-//                        productHistory.setProductNo(product.getId());
-//                        productHistory.setSiteType(product.getSiteType());
-//                        productHistory.setProdCode(product.getProdCode());
-//                        productHistory.setPrice(product.getPrice());
-//
-//                        if (product.getSiteType().equals("CL") && product.getSoldOut().equals("일시품절")) {
-//                            product.setPrice(foundProduct.getPrice());
-//                            productHistory.setPrice(foundProduct.getPrice());
-//                        }
-//
-//                        //제품 이력 저장
-//                        productHistoryRepository.save(productHistory);
-//                        productRepository.save(product);
-//                    }
-//                }
-            }catch (DataIntegrityViolationException e) {
-                log.warn("예외가 발생했습니다");
-            } catch (Exception e) {
+//                 들어온 값과 DB의 Img값이 다를 경우
+                if (!foundProduct.getImg().equals(productDTO.getImg())) {
+                    String filePath = Common.downloadImage(productDTO);
+                    productDTO.setImg(filePath);
+                    ccproductRepository.save(productDTO.toEntity()); //DB에 다시 저장
+                } else if (!foundProduct.getProdName().equals(productDTO.getProdName()) ||
+                        !foundProduct.getSoldOut().equals(productDTO.getSoldOut()) ||
+                        !foundProduct.getBrand().equals(productDTO.getBrand())) {
+                    ccproductRepository.save(productDTO.toEntity());
+                } else {
+                    if (foundProduct.getPrice() != Integer.parseInt(productDTO.getPrice())) {
+                        ProductHistory productHistory = new ProductHistory();
+                        productHistory.setHistoryNo(productDTO.getSiteType() + formattedDateTime + randomNumber);
+                        productHistory.setProductNo(foundProduct);
+                        productHistory.setSiteType(productDTO.getSiteType());
+                        productHistory.setProdCode(productDTO.getProdCode());
+                        productHistory.setPrice(Integer.parseInt(productDTO.getPrice()));
 
+                        if (productDTO.getSiteType().equals("CL") && productDTO.getSoldOut().equals("일시품절")) {
+                            productDTO.setPrice(String.valueOf(foundProduct.getPrice())); // String 타입으로 변환
+                            productHistory.setPrice(foundProduct.getPrice());
+                        }
+
+                        //제품 이력 저장
+                        ccproductHistoryRepository.save(productHistory);
+                        ccproductRepository.save(productDTO.toEntity());
+                    }
+                }
+            }catch (DataIntegrityViolationException e) {
+                log.warn("예외가 발생했습니다 : " + e.getMessage());
+            } catch (Exception e) {
+                log.warn(" 예외 발생 : " + e.getMessage());
             }
-//            }catch (UnsupportedEncodingException e) {
-//                common.sendMail(e.getMessage(), product.getSiteType());
-//            }catch (IOException e) {
-//                logger.warning(product.getProdCode() + "중복");
-//            }
-        }
+        } // for문 안에서 돌고 있는 try catch문이여서 에러가 잡혀도 에러 메세지 띄우고 다음 내용 진행됨
         return "끝남";
     }
 

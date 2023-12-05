@@ -1,5 +1,6 @@
 package com.example.cosmeticCrawlingJava.Controller;
 
+import com.example.cosmeticCrawlingJava.dto.ProductDTO;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.service.Crawling;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,11 @@ public class CommonController {
 
     @GetMapping("/test/123")
     public String show(Model model) {
-        Product product = new Product();
-        product.setSiteType("OL");
-        product.setProdCode("A000000166675");
-        product.setImg2("https://cdn.imweb.me/upload/94dc5a2f83cd5.jpg");
-        String filePath = Common.downloadImage(product);
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setSiteType("OL");
+        productDTO.setProdCode("A000000166675");
+        productDTO.setImg2("https://cdn.imweb.me/upload/94dc5a2f83cd5.jpg");
+        String filePath = Common.downloadImage(productDTO);
         model.addAttribute("filePath", filePath);
 
         return "new";

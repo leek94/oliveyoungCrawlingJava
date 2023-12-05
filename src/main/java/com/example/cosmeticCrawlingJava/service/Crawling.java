@@ -1,5 +1,6 @@
 package com.example.cosmeticCrawlingJava.service;
 
+import com.example.cosmeticCrawlingJava.dto.ProductDTO;
 import com.example.cosmeticCrawlingJava.entity.Category;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.service.ProductService;
@@ -67,7 +68,6 @@ public class Crawling {
                 }
             }
 
-
         try {
 
             // URL을 직접 연결하여 HTML 문서를 가져옵니다.
@@ -78,8 +78,7 @@ public class Crawling {
             Elements depth2Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > ul > li > a");
 
             List<Category> categories = new ArrayList<>();
-            List<Product> productList = new ArrayList<>();
-
+            List<ProductDTO> productList = new ArrayList<>();
 
             // count문 데이터베이스 연결하는 코드
             int prodCount = productService.countBySiteType(siteType); //값이 있으면 1 없으면 0 반환
@@ -165,14 +164,15 @@ public class Crawling {
 
                         String infoCoupang = "https://link.coupang.com/a/3IhPI"; //여기서는 초기화하고 나중에 링크 변경해주는 배치가 따로 깃에 있음
 
-
                         row++;
-
+                        ProductDTO productDTO = new ProductDTO(null, img, "uploadc/contents/image/" + siteType + "/" + prodCode + ".png","", info
+                                , infoCoupang, prodName, prodCode, price, bePrice, common.calculateDiscountPercent(bePrice, price)
+                                ,soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
                         //Create a Product object and add it to the product list
-                        Product product = new Product(null,"/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", img, info,
-                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
-                                soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand, infoCoupang);
-                        productList.add(product);
+//                        Product product = new Product(null,"/uploadc/contents/image/" + siteType + "/" + prodCode + ".png", img, info,
+//                                prodName, prodCode, Integer.parseInt(price), Integer.parseInt(bePrice), common.calculateDiscountPercent(bePrice, price),
+//                                soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand, infoCoupang);
+                        productList.add(productDTO);
                         productService.processProducts(productList, prodCount); //prodCount 이미 있으면 1 없으면 0
                         productList.clear();
                     }

@@ -1,5 +1,6 @@
 package com.example.cosmeticCrawlingJava.util;
 
+import com.example.cosmeticCrawlingJava.dto.ProductDTO;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +66,7 @@ public class Common {
         return ((bePriceInt - priceInt) / (double) bePriceInt * 100);
     }
 
-    public String nullCheck(Element element) {
+    public String  nullCheck(Element element) {
 
         return Optional.ofNullable(element)
                 .map(Element::text)
@@ -80,15 +81,15 @@ public class Common {
                 .orElse("0");
     }
 
-    public static String downloadImage(Product product) {
-        String fileDirectory = IMAGE_DIRECTORY + product.getSiteType() + "/";
+    public static String downloadImage(ProductDTO productDTO) {
+        String fileDirectory = IMAGE_DIRECTORY + productDTO.getSiteType() + "/";
         //"/uploadc/contents/image/OL/"
 //        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
-        String filePath = fileDirectory + product.getProdCode() + ".png";
+        String filePath = fileDirectory + productDTO.getProdCode() + ".png";
         //"/uploadc/contents/image/OL/A000000166675.png"
 
         try{
-            URL url = new URL(product.getImg2());
+            URL url = new URL(productDTO.getImg2());
             InputStream inputStream = url.openStream();
 
             Path path = Paths.get(fileDirectory);

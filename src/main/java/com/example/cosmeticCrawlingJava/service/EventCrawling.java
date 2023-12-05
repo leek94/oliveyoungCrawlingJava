@@ -1,5 +1,6 @@
 package com.example.cosmeticCrawlingJava.service;
 
+import com.example.cosmeticCrawlingJava.dto.EventDTO;
 import com.example.cosmeticCrawlingJava.entity.Event;
 import com.example.cosmeticCrawlingJava.util.Common;
 import com.example.cosmeticCrawlingJava.util.ReturnMessage;
@@ -23,7 +24,7 @@ public class EventCrawling {
 
     public void startEventCrawling(){
         String siteType = "OL";
-        List<Event> eventList = new ArrayList<>();
+        List<EventDTO> eventList = new ArrayList<>();
 
         try{
             String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
@@ -91,8 +92,8 @@ public class EventCrawling {
 //                eventIns.put("end", endDate);
 //                eventIns.put("flag", flag);
 
-                Event eventIns = new Event(title, content, img, "/uploadc/contents/image/event/" + eventCode + ".png", link, eventCode, siteType, startDate, endDate, flag);
-                eventList.add(eventIns);
+                EventDTO eventDTO= new EventDTO(title, content, img, "/uploadc/contents/image/event/" + eventCode + ".png", link, eventCode, siteType, startDate, endDate, flag);
+                eventList.add(eventDTO);
 
             }
 
