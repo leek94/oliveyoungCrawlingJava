@@ -131,7 +131,7 @@ public class Common {
             // 계정 정보 설정 -> 외부 설정 파일에서 불러옴
 
             // 메일 수신자 설정
-            String receiver = "jh@solutionfocus.co.kr";
+            String receiver = "khlee@solutionfocus.co.kr";
 
             //메일 세션 생성
             Session session = Session.getDefaultInstance(properties, new Authenticator() {

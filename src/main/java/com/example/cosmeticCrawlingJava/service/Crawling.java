@@ -74,8 +74,8 @@ public class Crawling {
             Document document = Jsoup.connect(url).get();
             // 이후, document 객체를 사용하여 파싱할 수 있습니다.
 
-            Elements depth1Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > p > a");// 여러개 나옴
-            Elements depth2Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > ul > li > a"); // 여러개 나옴
+            Elements depth1Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > p > a");
+            Elements depth2Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > ul > li > a");
 
             List<Category> categories = new ArrayList<>();
             List<Product> productList = new ArrayList<>();
@@ -84,11 +84,11 @@ public class Crawling {
             // count문 데이터베이스 연결하는 코드
             int prodCount = productService.countBySiteType(siteType); //값이 있으면 1 없으면 0 반환
 
-            for (Element depth1 : depth1Elements) {  // 여러번
+            for (Element depth1 : depth1Elements) {
                 siteDepth1 = depth1.text();  //스킨케어
                 String check1 = depth1.attr("data-attr"); //공통^드로우^스킨케어
 
-                for (Element depth2 : depth2Elements) { // 여러번
+                for (Element depth2 : depth2Elements) {
                     siteDepth2 = depth2.text(); // 토너/로션/올인원
                     String check2 = depth2.attr("data-attr");//공통^드로우^스킨케어_토너/로션/올인원
                     String siteLink = depth2.attr("data-ref-dispcatno"); //100000100010008
@@ -110,7 +110,7 @@ public class Crawling {
 
                 for (Element siteDepth3 : cateCategory) { // 4개 들어옴
                     int row = 0;
-                    int page = 2;
+                    int page = 2; // 1페이지는 처음에 진행됨 -> 다음 페이지가 2페이지부터 시작이므로 숫자 2로 초기화
                     String depth3 = siteDepth3.className(); //jsoup에서 classname 반환함
                     String depth3Url = "https://www.oliveyoung.co.kr/store/display/getMCategoryList.do?dispCatNo=" + depth3;
                     String siteDepth3Text = siteDepth3.text(); //스킨/토너, 로션/에멀젼, 올인원, 스킨케어 세트
@@ -120,8 +120,8 @@ public class Crawling {
 
                     for (int k = 0; k < Integer.parseInt(productCount); k++) {
 
-                        if (row == 24) {
-                            String nextLink = depth3Url + "&pageIdx=" + page;
+                        if (row == 24) { //24개 확인 후 페이지 넘어감감
+                           String nextLink = depth3Url + "&pageIdx=" + page;
                             Document document3 = Jsoup.connect(nextLink).get();
                             tag = document3.select("#Contents > ul > li[data-index]:not([data-index*='\\D'])");
                             page++;
@@ -153,50 +153,18 @@ public class Crawling {
                         Element bePriceElement = tagItem.selectFirst("span.tx_org > span");
                         // Optional로 null 값을 스트링 값인 "0"으로 변경
                         String bePrice = common.nullCheckPrice(bePriceElement);
-//                        String bePrice = Optional.ofNullable(bePriceElement)
-//                                .map(Element::text)
-//                                .map(text -> text.replaceAll("[^0-9]", ""))
-//                                .orElse("0");// 정규 표현식으로 숫자가 아닌 문자는 전부 삭제
 
                         Element priceElement = tagItem.selectFirst("span.tx_cur > span");
                         String price = common.nullCheckPrice(priceElement);
 
                         Element soldOutElement = tagItem.selectFirst("span.soldout");
                         String soldOut = common.nullCheck(soldOutElement);
-//                        String soldOut = Optional.ofNullable(soldOutElement)
-//                                .map(Element::text)
-//                                .orElse(null);
-
 
                         Element saleElement = tagItem.selectFirst("span.icon_flag.sale"); //span의 클래스 icon_flag와 클래스 sale 두개를 동시에 갖는 값을 뽑음
                         String sale = common.nullCheck(saleElement);
-//                        String sale = Optional.ofNullable(saleElement)
-//                                .map(Element::text)
-//                                .orElse(null); // 세일 안할 경우 null 값이 반환되서 Optional로 잡아줌
 
                         String infoCoupang = "https://link.coupang.com/a/3IhPI"; //여기서는 초기화하고 나중에 링크 변경해주는 배치가 따로 깃에 있음
 
-//                        Map<String, Object> ins = new HashMap<>();
-//                        ins.put("imgPath", img);
-//                        ins.put("img", "/uploadc/cpmtents/image/" + siteType + "/" + prodCode + ".png");
-//                        ins.put("img2", "");
-//                        ins.put("info", info);
-//                        ins.put("infoCoupang", "https://link.coupang.com/a/3IhPI");
-//                        ins.put("prodName", prodName);
-//                        ins.put("prodCode", prodCode);
-//                        ins.put("price", price); //String 값 들어가 있음
-//                        ins.put("bePrice", bePrice);
-//                        ins.put("sale", common.calculateDiscountPercent(bePrice, price)); // int로 변경
-//                        ins.put("soldOut", soldOut);
-//                        System.out.println(soldOut);
-//                        //TODO : for문이 돌아가서 저장된 리스트에서 첫번째 값부터 불러와지면서 값이 들어가짐
-//                        ins.put("siteDepth1", siteDepth1);
-//                        ins.put("siteDepth2", siteDepth2);
-//                        //TODO : for 문이 끝까지 돌아서 siteDepth1 : 남성, siteDepth2 : 바디케어 값이 들어가 있음
-//                        //TODO : 그래서 위에 처럼 저장된 List에서 객체 순서대로 불러와야 올바른 값이 들어감!!!
-//                        ins.put("siteDepth3", siteDepth3Text); // text가 나와야함
-//                        ins.put("siteType", siteType);
-//                        ins.put("brand", brand);
 
                         row++;
 

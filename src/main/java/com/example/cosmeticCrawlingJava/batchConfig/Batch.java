@@ -20,8 +20,8 @@ public class Batch {
 
     @Bean
     public Job TaskletJob(){
-        Job crawlingJob = jobBuilderFactory.get("tasklet")
-                .start(TaskStep())
+        Job crawlingJob = jobBuilderFactory.get("tasklet") // tasklet으로 이름 지정
+                .start(TaskStep()) // TaskStep이라는 이름으로 Batch Step 생성
                 .build();
 
         return crawlingJob;
@@ -29,8 +29,8 @@ public class Batch {
 
     @Bean
     public Step TaskStep() {
-        return stepBuilderFactory.get("taskStep")
-                .tasklet(customTasklet)
+        return stepBuilderFactory.get("taskStep") // 이름 지정
+                .tasklet(customTasklet) // customTasklet 실행
                 .build();
 
     }

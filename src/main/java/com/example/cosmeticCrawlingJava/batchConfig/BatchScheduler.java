@@ -24,20 +24,20 @@ public class BatchScheduler {
     @Autowired
     private Batch batch;
 
-    //    @Scheduled(cron = "* 20 12,18 * * * *") // 매일 오후 12시20분, 오후 6시20분 실행
-//    @Scheduled(cron = "* * 0/3 * * *")
-//    public void runJob() {
-//
-//        Map<String, JobParameter> confMap = new HashMap<>();
-//        confMap.put("time", new JobParameter(System.currentTimeMillis()));
-//        JobParameters jobParameters = new JobParameters(confMap);
-//
-//        try {
-//            jobLauncher.run(batch.TaskletJob(), jobParameters);
-//        } catch (JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException
-//                | JobParametersInvalidException | JobRestartException e) {
-//            log.error(e.getMessage());
-//        }
-//
-//    }
+//        @Scheduled(cron = "* 20 12,18 * * * *") // 매일 오후 12시20분, 오후 6시20분 실행
+    @Scheduled(cron = "0 */3 * * * *") // 3분 마다
+    public void runJob() {
+
+        Map<String, JobParameter> confMap = new HashMap<>();
+        confMap.put("time", new JobParameter(System.currentTimeMillis()));
+        JobParameters jobParameters = new JobParameters(confMap);
+
+        try {
+            jobLauncher.run(batch.TaskletJob(), jobParameters);
+        } catch (JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException
+                | JobParametersInvalidException | JobRestartException e) {
+            log.error(e.getMessage());
+        }
+
+    }
 }
