@@ -1,20 +1,27 @@
 package com.example.cosmeticCrawlingJava.service;
 
 import com.example.cosmeticCrawlingJava.entity.Event;
+import com.example.cosmeticCrawlingJava.util.Common;
 import com.example.cosmeticCrawlingJava.util.ReturnMessage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
 
-import static com.example.cosmeticCrawlingJava.util.Common.nullCheck;
-import static com.example.cosmeticCrawlingJava.util.Common.sendMail;
-
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class EventCrawling {
-    public static void main(String[] args) {
+
+    private final Common common;
+
+    public void startEventCrawling(){
         String siteType = "OL";
         List<Event> eventList = new ArrayList<>();
 
@@ -30,10 +37,10 @@ public class EventCrawling {
 
             for(Element tagItem : tag){
                 Element titleElement = tagItem.selectFirst(" p.evt_tit ");
-                String title = nullCheck(titleElement);
+                String title = common.nullCheck(titleElement);
 
                 Element contentElement = tagItem.selectFirst(" p.evt_desc");
-                String content = nullCheck(contentElement);
+                String content = common.nullCheck(contentElement);
 
                 Element imgElement = tagItem.selectFirst("img");
                 String img = Optional.ofNullable(imgElement)
@@ -70,7 +77,7 @@ public class EventCrawling {
                 //span.evt_flag로 해야 온라인, 온&오프라인, 오프라인 다 나옴 span.evt_flag.online으로 하면 온라인만 나옴
 //                Element flagElement = tagItem.selectFirst("span.evt_flag");
                 Element flagElement = tagItem.selectFirst("span.evt_flag.online");
-                String flag = nullCheck(flagElement);
+                String flag = common.nullCheck(flagElement);
 
 //                Map<String, String> eventIns = new HashMap<>();
 //                eventIns.put("title", title);
@@ -93,7 +100,7 @@ public class EventCrawling {
 
 
         }catch (IOException e){
-            sendMail(ReturnMessage.CHANGE_CATEGORY.getMessage(), siteType);
+            common.sendMail(ReturnMessage.CHANGE_CATEGORY.getMessage(), siteType);
             e.printStackTrace();
         }
     }

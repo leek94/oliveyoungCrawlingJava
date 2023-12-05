@@ -1,19 +1,28 @@
 package com.example.cosmeticCrawlingJava.service;
 
 import com.example.cosmeticCrawlingJava.entity.Experience;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import com.example.cosmeticCrawlingJava.util.Common;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Slf4j
+@Service
+@RequiredArgsConstructor
 public class ExperienceCrawling {
-    public static void main(String[] args) {
+
+    private final Common common;
+
+    public void startExperienceCrawling(){
+
         String siteType = "OL";
         String experience = "https://www.oliveyoung.co.kr/store/main/getEventList.do?evtType=100";
         int page = 2;
@@ -42,10 +51,10 @@ public class ExperienceCrawling {
 
                 for(Element tagItem : tag){
                     Element titleElement = tagItem.selectFirst("p.dec1");
-                    String title = Common.nullCheck(titleElement);
+                    String title = common.nullCheck(titleElement);
 
                     Element contentElement = tagItem.selectFirst("p.dec2");
-                    String content = Common.nullCheck(tagItem);
+                    String content = common.nullCheck(tagItem);
 
                     Element imgElement = tagItem.selectFirst("img");
                     String img = Optional.ofNullable(imgElement)

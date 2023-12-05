@@ -62,7 +62,7 @@ public class Crawling {
                 retryCount++;
 
                 if (retryCount == 3) {
-                    Common.sendMail(ReturnMessage.CONNECTION.getMessage(), siteType);
+                    common.sendMail(ReturnMessage.CONNECTION.getMessage(), siteType);
                     System.exit(0);
                 }
             }

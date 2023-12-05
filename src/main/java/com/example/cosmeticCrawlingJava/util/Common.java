@@ -39,6 +39,12 @@ public class Common {
     @Value("${spring.datasource.password}")
     private  String password;
 
+    @Value("${spring.email.email}")
+    private String email;
+
+    @Value("${spring.email.emailPW}")
+    private String emailPW;
+
     String siteType = "OL";
 
 
@@ -48,7 +54,7 @@ public class Common {
     private static final String IMAGE_DIRECTORY = "/uploadc/contents/image/";// 이미지 경로
 
 
-    public static double calculateDiscountPercent(String bePrice, String price) {
+    public double calculateDiscountPercent(String bePrice, String price) {
         if(bePrice.equals("0")){
             return 0.0;
 
@@ -59,7 +65,7 @@ public class Common {
         return ((bePriceInt - priceInt) / (double) bePriceInt * 100);
     }
 
-    public static String nullCheck(Element element) {
+    public String nullCheck(Element element) {
 
         return Optional.ofNullable(element)
                 .map(Element::text)
@@ -107,7 +113,7 @@ public class Common {
         return filePath;
     }
 
-    public static void sendMail(String message, String siteType) {
+    public void sendMail(String message, String siteType) {
         try{
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -122,9 +128,7 @@ public class Common {
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.port", "587");
 
-            // 계정 정보 설정
-            String username = "solutionfocus@naver.com";
-            String password = "!solfocus0515";
+            // 계정 정보 설정 -> 외부 설정 파일에서 불러옴
 
             // 메일 수신자 설정
             String receiver = "jh@solutionfocus.co.kr";
@@ -132,13 +136,13 @@ public class Common {
             //메일 세션 생성
             Session session = Session.getDefaultInstance(properties, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
+                    return new PasswordAuthentication(email, emailPW);
                 }
             });
 
             //메시지 생성
             Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(username));
+            msg.setFrom(new InternetAddress(email));
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress((receiver)));
             msg.setSubject(title);
             msg.setText(content);
