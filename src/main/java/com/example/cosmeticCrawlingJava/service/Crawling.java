@@ -12,6 +12,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,7 +39,6 @@ public class Crawling {
     public void startCrawling() {
 
         String siteType = "OL";
-//        WebDriver driver = Common.startCrawling(siteType, url, name, password);
         WebDriver driver = common.startCrawling(siteType);
         String url = "https://www.oliveyoung.co.kr/store/main/main.do?oy=0";
         String siteDepth1 = "";
@@ -46,10 +46,10 @@ public class Crawling {
 
         int maxRetries = 3;
         int retryCount = 0;
-        HttpClient httpClient = HttpClientBuilder.create().build();
 
-        //최대 3번 연결 시도 while문
-        while(retryCount < maxRetries)
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        // 사이트가 연결이 되는지 확인하는 구문 -> 없어도 무방함함
+       while(retryCount < maxRetries)
             try{
                 HttpGet request = new HttpGet(url); // url 페이지 요청
                 HttpResponse response = httpClient.execute(request);
@@ -62,7 +62,7 @@ public class Crawling {
                 log.info("서버와 연결이 불안정해 다시 시도합니다...." + retryCount);
                 retryCount++;
 
-                if (retryCount == 3) {
+                if (retryCount == maxRetries) {
                     common.sendMail(ReturnMessage.CONNECTION.getMessage(), siteType);
                     System.exit(0);
                 }
@@ -71,7 +71,10 @@ public class Crawling {
         try {
 
             // URL을 직접 연결하여 HTML 문서를 가져옵니다.
-            Document document = Jsoup.connect(url).get();
+            Connection connetion = Jsoup.connect(url)
+                    .timeout(30000); // readtime 10초 설정
+
+            Document document = connetion.get();
             // 이후, document 객체를 사용하여 파싱할 수 있습니다.
 
             Elements depth1Elements = document.select("#gnbAllMenu > ul > li:nth-child(1) > div > p > a");
@@ -101,7 +104,12 @@ public class Crawling {
 
             for (Category category : categories) { //58개 들어옴
                 String depth2Url = "https://www.oliveyoung.co.kr/store/display/getMCategoryList.do?dispCatNo=" + category.getSiteLink();
-                Document document1 = Jsoup.connect(depth2Url).get();
+
+                Connection connetion1 = Jsoup.connect(depth2Url)
+                        .timeout(30000); // readtime 10초 설정
+
+                Document document1 = connetion1.get();
+
                 Elements cateCategory = document1.select("#Contents > ul.cate_list_box > li > a");
                 cateCategory.remove(0); // 맨앞 전체라는 카테고리를 없애기 위해서 첫번째 인덱스 내용 삭제
                 siteDepth1 = category.getSiteDepth1();
@@ -113,7 +121,12 @@ public class Crawling {
                     String depth3 = siteDepth3.className(); //jsoup에서 classname 반환함
                     String depth3Url = "https://www.oliveyoung.co.kr/store/display/getMCategoryList.do?dispCatNo=" + depth3;
                     String siteDepth3Text = siteDepth3.text(); //스킨/토너, 로션/에멀젼, 올인원, 스킨케어 세트
-                    Document document2 = Jsoup.connect(depth3Url).get();
+
+                    Connection connetion2 = Jsoup.connect(depth3Url)
+                            .timeout(30000); // readtime 10초 설정
+
+                    Document document2 = connetion2.get();
+
                     String productCount = document2.select("p.cate_info_tx > span").text(); //등록 갯수 확인
                     Elements tag = document2.select("#Contents > ul > li[data-index]:not([data-index*='\\D'])"); //ul 이지만 인덱스가 있는 값만 찾아옴, 정규 표현식 0번이상 반복 숫자가아닌 값
 
@@ -165,7 +178,7 @@ public class Crawling {
                         String infoCoupang = "https://link.coupang.com/a/3IhPI"; //여기서는 초기화하고 나중에 링크 변경해주는 배치가 따로 깃에 있음
 
                         row++;
-                        ProductDTO productDTO = new ProductDTO(null, img, "uploadc/contents/image/" + siteType + "/" + prodCode + ".png","", info
+                        ProductDTO productDTO = new ProductDTO(null, img, "/uploadc/contents/image/" + siteType + "/" + prodCode + ".png","", info
                                 , infoCoupang, prodName, prodCode, price, bePrice, common.calculateDiscountPercent(bePrice, price)
                                 ,soldOut, siteDepth1, siteDepth2, siteDepth3Text, siteType, brand);
                         //Create a Product object and add it to the product list

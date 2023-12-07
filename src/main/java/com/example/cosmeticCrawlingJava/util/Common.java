@@ -89,7 +89,7 @@ public class Common {
         //"/uploadc/contents/image/OL/A000000166675.png"
 
         try{
-            URL url = new URL(productDTO.getImg2());
+            URL url = new URL(productDTO.getImgPath());
             InputStream inputStream = url.openStream();
 
             Path path = Paths.get(fileDirectory);
@@ -172,19 +172,15 @@ public class Common {
 
 
         ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--headless");
+        options.addArguments("--headless");
         options.addArguments("--no-sandbox");
 
         WebDriver driver = new ChromeDriver(options);
 
-        log.info(siteType + "크롤릴 중간");
         // JDBC로 데이터베이스 연결
         try {
-            log.info(siteType + "크롤릴 중간 시작");
-
             Connection connection = DriverManager.getConnection(url, name, password); //로컬 데이터베이스
 //            Connection connection = dataSource.getConnection(); // TODO : 현재 @Component로 받아와서 사용하는 방식으로 구현중 그런데 이렇게 하면 간단하게 테스트가 안됨 스프링 돌때매 @Values에 값이 들어옴 --> 테스트 방법 필요
-            log.info(siteType + "크롤릴 중간22");
             String findBatchYn = "SELECT batch_yn FROM cc_site WHERE site_type = ?";
             PreparedStatement statement = connection.prepareStatement(findBatchYn);
             statement.setString(1, siteType); // SQL injection 공격 방지하려고 동적으로 값 설정
