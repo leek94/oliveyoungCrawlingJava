@@ -88,12 +88,12 @@ public class ProductService {
                     foundProduct.setProdName(productDTO.getProdName());
                 }
                 // soldOut 변경시 업데이트
-                if(foundProduct.getSoldOut().equals(productDTO.getSoldOut())){
+                if(!foundProduct.getSoldOut().equals(productDTO.getSoldOut())){
                     System.out.println("sold out 변경");
                     foundProduct.setSoldOut(productDTO.getSoldOut());
                 }
                 // 브랜드 변경시 업데이트
-                if(foundProduct.getBrand().equals(productDTO.getBrand())){
+                if(!foundProduct.getBrand().equals(productDTO.getBrand())){
                     System.out.println("브랜드 변경");
                     foundProduct.setBrand(productDTO.getBrand());
 
@@ -120,7 +120,7 @@ public class ProductService {
                         System.out.println("12");
                         //제품 이력 저장
                         ccproductHistoryRepository.save(productHistory);
-                        ccproductRepository.save(productDTO.toEntity());
+//                        ccproductRepository.save(productDTO.toEntity());
                     }
 
             }catch (DataIntegrityViolationException e) {
