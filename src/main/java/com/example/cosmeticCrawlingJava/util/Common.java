@@ -1,6 +1,7 @@
 package com.example.cosmeticCrawlingJava.util;
 
 import com.example.cosmeticCrawlingJava.dto.ProductDTO;
+import com.example.cosmeticCrawlingJava.dto.SiteEventDTO;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +82,7 @@ public class Common {
                 .orElse("0");
     }
 
-    public static String downloadImage(ProductDTO productDTO) {
+    public String downloadImage(ProductDTO productDTO) {
         String fileDirectory = IMAGE_DIRECTORY + productDTO.getSiteType() + "/";
         //"/uploadc/contents/image/OL/"
 //        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
@@ -90,6 +91,39 @@ public class Common {
 
         try{
             URL url = new URL(productDTO.getImgPath());
+            InputStream inputStream = url.openStream();
+
+            Path path = Paths.get(fileDirectory);
+            Files.createDirectories(path);
+
+            if (!Files.exists(Paths.get(filePath))) {
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+                fileOutputStream.close();
+            }
+            inputStream.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        System.out.println("filePath : " + filePath);
+        return filePath;
+    }
+
+    public String downloadImageEvent(SiteEventDTO siteEventDTO){
+        String fileDirectory = IMAGE_DIRECTORY + "event"+ "/" +siteEventDTO.getEventSeq();
+        //"/uploadc/contents/image/event/E123456/"
+//        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
+        String filePath = fileDirectory + ".png";
+        //"/uploadc/contents/image/OL/A000000166675.png"
+
+        try{
+            URL url = new URL(siteEventDTO.getImgPath());
             InputStream inputStream = url.openStream();
 
             Path path = Paths.get(fileDirectory);

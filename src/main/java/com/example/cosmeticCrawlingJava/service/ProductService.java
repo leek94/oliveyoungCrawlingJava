@@ -27,6 +27,8 @@ public class ProductService {
     private final CcProductRepository ccproductRepository;
     private final CcProductHistoryRepository ccproductHistoryRepository;
     private final CcTempProductService ccTempProductService;
+    private final Common common;
+
 
     @Transactional
     public String processProducts(List<ProductDTO> productList, int productCount) {
@@ -56,7 +58,7 @@ public class ProductService {
                     System.out.println("5");
                     if (Integer.parseInt(productDTO.getPrice()) > 0) {
                         System.out.println("6");
-                        String filePath = Common.downloadImage(productDTO); // 이미지 다운로드
+                        String filePath = common.downloadImage(productDTO); // 이미지 다운로드
                         productDTO.setImg(filePath); // 이미지 경로 저장
 
                         Product savedProduct = ccproductRepository.save(productDTO.toEntity()); // 값 DB에 저장
@@ -79,7 +81,7 @@ public class ProductService {
                 //들어온 값과 DB의 Img값이 다를 경우
                 if (!foundProduct.getImg().equals(productDTO.getImg())) {
                     System.out.println("이미지 변경");
-                    String filePath = Common.downloadImage(productDTO);
+                    String filePath = common.downloadImage(productDTO);
                     productDTO.setImg(filePath);
                 }
                 // 제품 이름 변경시 업데이트
@@ -132,7 +134,7 @@ public class ProductService {
                 e.printStackTrace();
             }
         } // for문 안에서 돌고 있는 try catch문이여서 에러가 잡혀도 에러 메세지 띄우고 다음 내용 진행됨
-        return "끝남";
+        return "product 끝남";
     }
 
     @Transactional
