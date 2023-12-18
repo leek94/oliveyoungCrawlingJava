@@ -1,5 +1,6 @@
 package com.example.cosmeticCrawlingJava.util;
 
+import com.example.cosmeticCrawlingJava.dto.ExperienceDTO;
 import com.example.cosmeticCrawlingJava.dto.ProductDTO;
 import com.example.cosmeticCrawlingJava.dto.SiteEventDTO;
 import com.example.cosmeticCrawlingJava.entity.Product;
@@ -124,6 +125,38 @@ public class Common {
 
         try{
             URL url = new URL(siteEventDTO.getImgPath());
+            InputStream inputStream = url.openStream();
+
+            Path path = Paths.get(fileDirectory);
+            Files.createDirectories(path);
+
+            if (!Files.exists(Paths.get(filePath))) {
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+                fileOutputStream.close();
+            }
+            inputStream.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        System.out.println("filePath : " + filePath);
+        return filePath;
+    }
+    public String downloadImageExperience(ExperienceDTO experienceDTO){
+        String fileDirectory = IMAGE_DIRECTORY + "event"+ "/" +experienceDTO.getEventCode();
+        //"/uploadc/contents/image/event/E123456/"
+//        String fileDirectory = "C:\\Users\\Focus\\image\\OL\\";
+        String filePath = fileDirectory + ".png";
+        //"/uploadc/contents/image/OL/A000000166675.png"
+
+        try{
+            URL url = new URL(experienceDTO.getImgPath());
             InputStream inputStream = url.openStream();
 
             Path path = Paths.get(fileDirectory);

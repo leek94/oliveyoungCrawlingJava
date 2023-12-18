@@ -38,8 +38,6 @@ public class SiteEventDTO {
                 .id(null)
                 .eventTitle(title)
                 .eventContent(content)
-                .useYn(useYn)
-                .topYn(topYn)
                 .eventRecruit(eventRecruit)
                 .eventImg(eventImg)
                 .eventLink(eventLink)

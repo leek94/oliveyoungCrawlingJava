@@ -4,6 +4,7 @@ import com.example.cosmeticCrawlingJava.dto.ProductDTO;
 import com.example.cosmeticCrawlingJava.entity.Product;
 import com.example.cosmeticCrawlingJava.service.Crawling;
 import com.example.cosmeticCrawlingJava.service.EventCrawling;
+import com.example.cosmeticCrawlingJava.service.ExperienceCrawling;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import com.example.cosmeticCrawlingJava.util.Common;
 @Controller
 @RequiredArgsConstructor
 public class CommonController {
-
+    private final ExperienceCrawling experienceCrawling;
     private final EventCrawling eventCrawling;
     private final Crawling crawling;
     private final Common common;
@@ -37,6 +38,16 @@ public class CommonController {
         System.out.println("걸리는 시간 : " + (end - start));
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @GetMapping("/testExperience")
+    public ResponseEntity testExperience() {
+        long start = System.currentTimeMillis();
+        experienceCrawling.startExperienceCrawling();
+        long end = System.currentTimeMillis();
+        System.out.println("걸리는 시간 : " + (end - start));
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 
 
 

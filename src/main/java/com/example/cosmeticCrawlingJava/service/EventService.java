@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class EventService {
     private final Common common;
     public static final String FILE_DIRECTORY = "/uploadc/contents/image/event/";
 
+    //TODO : Try catch문으로 감싸기
 
     @Transactional
     public String processEvent(List<SiteEventDTO> siteEventDTOList, String siteType) {
@@ -47,8 +49,8 @@ public class EventService {
 //            SiteEventDTO siteEventDTO = titleMap.get(checkKey);// key에 해당하는 밸류를 받아옴 -> siteEventDTO객체
             Long eventId = checkValue.getId();
 
-            if(!titleMap.containsKey(checkKey)){ // 크롤링 해온 내용에 DB 내용이 없으면 --> 이미 끝났다는 의미
-                Path filePath = Paths.get(FILE_DIRECTORY + checkValue.getEventLink()+ ".png");
+            if(!titleMap.containsKey(checkKey)){ // 크롤링 해온 내용이 DB 내용이 없으면 --> 이미 끝났다는 의미
+                Path filePath = Paths.get(FILE_DIRECTORY + checkValue.getEventSeq()+ ".png");
 //                Files.delete(filePath);
 //                Files.createDirectories(filePath);
                 ccSiteEventRepository.deleteById(checkValue.getId()); // 아이디 값을 통해 삭제

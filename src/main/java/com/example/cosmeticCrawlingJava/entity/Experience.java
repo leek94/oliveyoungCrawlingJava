@@ -11,23 +11,23 @@ import lombok.Setter;
 public class Experience {
     String title;
     String content;
-    String imgPath;
+    String img;
     String link;
     String eventCode;
     String siteType;
-    String start;
-    String end;
+    String startDate;
+    String endDate;
     String eventRecruit;
 
-    public Experience(String title, String content, String imgPath, String link, String eventCode, String siteType, String start, String end, String eventRecruit) {
+    public Experience(String title, String content, String img, String link, String eventCode, String siteType, String startDate, String endDate, String eventRecruit) {
         this.title = title;
         this.content = content;
-        this.imgPath = imgPath;
+        this.img = img;
         this.link = link;
         this.eventCode = eventCode;
         this.siteType = siteType;
-        this.start = start;
-        this.end = end;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.eventRecruit = eventRecruit;
     }
 }
