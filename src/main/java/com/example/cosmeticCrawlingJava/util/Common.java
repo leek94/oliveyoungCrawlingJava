@@ -112,7 +112,6 @@ public class Common {
         } catch (IOException e){
             e.printStackTrace();
         }
-        System.out.println("filePath : " + filePath);
         return filePath;
     }
 
@@ -145,7 +144,6 @@ public class Common {
         } catch (IOException e){
             e.printStackTrace();
         }
-        System.out.println("filePath : " + filePath);
         return filePath;
     }
     public String downloadImageExperience(ExperienceDTO experienceDTO){
@@ -177,7 +175,6 @@ public class Common {
         } catch (IOException e){
             e.printStackTrace();
         }
-        System.out.println("filePath : " + filePath);
         return filePath;
     }
 
@@ -196,7 +193,7 @@ public class Common {
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.port", "587");
 
-            // 계정 정보 설정 -> 외부 설정 파일에서 불러옴
+            // 계정 정보 설정 -> 외부 설정 파일에서 불러옴 (properties에서 받아옴)
 
             // 메일 수신자 설정
             String receiver = "khlee@solutionfocus.co.kr";
@@ -222,6 +219,7 @@ public class Common {
             e.printStackTrace();
         }
     }
+
     public void retryChecker(){
         int maxRetries = 3;
         int retryCount = 0;

@@ -1,15 +1,13 @@
 package com.example.cosmeticCrawlingJava.dto;
 
 import com.example.cosmeticCrawlingJava.entity.Product;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class ProductDTO {
 
     private Long id;

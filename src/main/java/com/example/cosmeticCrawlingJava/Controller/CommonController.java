@@ -48,8 +48,17 @@ public class CommonController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @GetMapping("/totalTest")
+    public ResponseEntity totalTest(){
 
-
+        long start = System.currentTimeMillis();
+        crawling.startCrawling();
+        eventCrawling.startEventCrawling();
+        experienceCrawling.startExperienceCrawling();
+        long end = System.currentTimeMillis();
+        System.out.println(" 걸리는 시간 : " + (end - start));
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @GetMapping("/test/123")
     public String show(Model model) {
