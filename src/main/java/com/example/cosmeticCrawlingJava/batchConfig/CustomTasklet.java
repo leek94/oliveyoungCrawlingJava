@@ -1,6 +1,8 @@
 package com.example.cosmeticCrawlingJava.batchConfig;
 
 import com.example.cosmeticCrawlingJava.service.Crawling;
+import com.example.cosmeticCrawlingJava.service.EventCrawling;
+import com.example.cosmeticCrawlingJava.service.ExperienceCrawling;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -22,6 +24,8 @@ import java.time.LocalDateTime;
 public class CustomTasklet implements Tasklet, StepExecutionListener {
 
     private final Crawling crawling;
+    private final EventCrawling eventCrawling;
+    private final ExperienceCrawling experienceCrawling;
 
     @Override
     @BeforeStep
@@ -41,6 +45,8 @@ public class CustomTasklet implements Tasklet, StepExecutionListener {
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
 
         crawling.startCrawling();
+        eventCrawling.startEventCrawling();
+        experienceCrawling.startExperienceCrawling();
 
         return RepeatStatus.FINISHED;
     }
