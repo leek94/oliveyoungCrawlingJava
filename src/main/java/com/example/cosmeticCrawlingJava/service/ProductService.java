@@ -35,11 +35,10 @@ public class ProductService {
     public String processProducts(List<ProductDTO> productList, int productCount) {
         for (ProductDTO productDTO : productList) {
             try {
-                //System.out.println("1");
+
                 ccTempProductService.insertIntoTempProduct(productDTO.getProdCode(), productDTO.getSiteType());
-                // 조건에 맞는 값을 받아옴 TODO : Optional로 감싸야하는 거 아닌지? --> null일때 저장을 하고 있는데 Optional로 굳이 감싸야 하는 지>?
-                //System.out.println("2");
-                Optional<Product> foundProduct = ccproductRepository.findByComplexAttributes(
+
+                Optional<Product> foundProductOP = ccproductRepository.findByComplexAttributes(
                         productDTO.getProdCode(),
                         productDTO.getSiteType(),
                         productDTO.getSiteDepth1(),
@@ -47,7 +46,6 @@ public class ProductService {
                         productDTO.getSiteDepth3()
                 );
 
-                //System.out.println("3");
                 long randomNum = (long)(Math.random() * (10000000000L - 1000000000L) + 1000000000L);
                 String randomNumber = Long.toString(randomNum);
 
@@ -55,30 +53,12 @@ public class ProductService {
                 LocalDateTime now = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
                 String formattedDateTime = now.format(formatter);
-                //System.out.println("4");
 
-//                if(!foundProduct.isPresent()) {
-//                    System.out.println("productDTO" + productDTO);
-//                    System.out.println("종료");
-//                    return null;
-//                }
-
-                if ((productCount == 0 || !foundProduct.isPresent())) { // siteType 확인, DB 저장된 값 확인
-                    if (foundProduct.get().getProdName().trim().equals("피캄 베리어 사이클 락토P 토너200ml 기획(+화장솜 증정)")) {
-                        System.out.println("productCount = " + productCount);
-                        System.out.println("productDTO : " + productDTO);
-                        System.out.println("foundProduct : " + foundProduct);
-                        System.out.println("======================================= 찾음 ==================================");
-                        return "";
-                    }
-                    //System.out.println("5");
+                if (productCount == 0 || !foundProductOP.isPresent()) { // siteType 확인, DB 저장된 값 확인
                     if (Integer.parseInt(productDTO.getPrice()) > 0) {
-                        //System.out.println("6");
                         String filePath = common.downloadImage(productDTO); // 이미지 다운로드
                         productDTO.setImg(filePath); // 이미지 경로 저장
-                        //System.out.println("7");
                         Product savedProduct = ccproductRepository.save(productDTO.toEntity()); // 값 DB에 저장
-                        //System.out.println("8");
 
                         ProductHistory productHistory = new ProductHistory();
                         productHistory.setId(productDTO.getSiteType() + formattedDateTime + randomNumber);
@@ -91,52 +71,44 @@ public class ProductService {
                         ccproductHistoryRepository.save(productHistory);
                         log.info("새 제품이 추가되었습니다");
                     }
-                    //System.out.println("10");
                     continue;
                 }
                 // 변경시 @Transactional을 달아서 더티 체킹으로 업데이트
-
                 //들어온 값과 DB의 Img값이 다를 경우
-                if (!foundProduct.get().getImg().equals(productDTO.getImg())) {
-                    //System.out.println("11");
+                if (!foundProductOP.get().getImg().equals(productDTO.getImg())) {
                     String filePath = common.downloadImage(productDTO);
                     productDTO.setImg(filePath);
                 }
                 // 제품 이름 변경시 업데이트
-                if (!foundProduct.get().getProdName().equals(productDTO.getProdName())) {
-                    //System.out.println("12");
-                    foundProduct.get().setProdName(productDTO.getProdName());
+                if (!foundProductOP.get().getProdName().equals(productDTO.getProdName())) {
+                    foundProductOP.get().setProdName(productDTO.getProdName());
                 }
                 // soldOut 변경시 업데이트
-                if(!foundProduct.get().getSoldOut().equals(productDTO.getSoldOut())){
-                    //System.out.println("13");
-                    foundProduct.get().setSoldOut(productDTO.getSoldOut());
+                if(!foundProductOP.get().getSoldOut().equals(productDTO.getSoldOut())){
+                    foundProductOP.get().setSoldOut(productDTO.getSoldOut());
                 }
                 // 브랜드 변경시 업데이트
-                if(!foundProduct.get().getBrand().equals(productDTO.getBrand())){
-                    //System.out.println("14");
-                    foundProduct.get().setBrand(productDTO.getBrand());
+                if(!foundProductOP.get().getBrand().equals(productDTO.getBrand())){
+                    foundProductOP.get().setBrand(productDTO.getBrand());
 
                 }
                 // 가격 변동시 이력 저장 및 가격 업데이트
-                if (foundProduct.get().getPrice() != Integer.parseInt(productDTO.getPrice())) {
-                    //System.out.println("15");
-                        System.out.println("foundProduct.getPrice() = " + foundProduct.get().getPrice());
+                if (foundProductOP.get().getPrice() != Integer.parseInt(productDTO.getPrice())) {
+                        System.out.println("foundProduct.getPrice() = " + foundProductOP.get().getPrice());
                         System.out.println("Integer.parseInt(productDTO.getPrice()) = " + Integer.parseInt(productDTO.getPrice()));
 
                         ProductHistory productHistory = new ProductHistory();
                         productHistory.setId(productDTO.getSiteType() + formattedDateTime + randomNumber);
-                        productHistory.setProductNo(foundProduct.get());
+                        productHistory.setProductNo(foundProductOP.get());
                         productHistory.setSiteType(productDTO.getSiteType());
                         productHistory.setProdCode(productDTO.getProdCode());
                         productHistory.setPrice(Integer.parseInt(productDTO.getPrice()));
-                    //System.out.println("16");
+
                         if (productDTO.getSiteType().equals("CL") && productDTO.getSoldOut().equals("일시품절")) {
-                            productDTO.setPrice(String.valueOf(foundProduct.get().getPrice())); // String 타입으로 변환
-                            productHistory.setPrice(foundProduct.get().getPrice());
+                            productDTO.setPrice(String.valueOf(foundProductOP.get().getPrice())); // String 타입으로 변환
+                            productHistory.setPrice(foundProductOP.get().getPrice());
                             System.out.println("17");
                         }
-                    //System.out.println("18");
                         //제품 이력 저장
                         ccproductHistoryRepository.save(productHistory);
 //                        ccproductRepository.save(productDTO.toEntity());

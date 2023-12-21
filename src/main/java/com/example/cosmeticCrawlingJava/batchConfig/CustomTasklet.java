@@ -43,11 +43,12 @@ public class CustomTasklet implements Tasklet, StepExecutionListener {
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-
+        long start = System.currentTimeMillis();
         crawling.startCrawling();
         eventCrawling.startEventCrawling();
         experienceCrawling.startExperienceCrawling();
-
+        long end = System.currentTimeMillis();
+        System.out.println("걸리는 시간 : " + (end - start));
         return RepeatStatus.FINISHED;
     }
 }
